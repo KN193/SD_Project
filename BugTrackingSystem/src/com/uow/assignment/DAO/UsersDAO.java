@@ -38,9 +38,11 @@ public class UsersDAO {
 			while (rs.next()) {
 				String usrName = rs.getString("userName");
 				String roles = rs.getString("roles");
+				int id = rs.getInt("ID");
 				returnedUser = new User();
 				returnedUser.setRoles(roles);
 				returnedUser.setUserName(usrName);
+				returnedUser.setID(id+"");
 			}
 			stt.close();
 			conn.close();

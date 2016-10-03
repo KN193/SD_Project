@@ -73,7 +73,7 @@ public class LoginView extends JPanel {
 		add(btnReset);
 		
 		JLabel img = new JLabel("");
-		img.setIcon(new ImageIcon("res/icon/ico/Friends.png"));
+		img.setIcon(new ImageIcon("res/icon/png/Friends.png"));
 		img.setBounds(280, 45, 69, 62);
 		add(img);
 		

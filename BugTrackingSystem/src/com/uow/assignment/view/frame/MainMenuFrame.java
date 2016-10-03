@@ -1,8 +1,10 @@
 package com.uow.assignment.view.frame;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,6 +15,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
 import com.uow.assignment.model.User;
+import com.uow.assignment.view.MainView;
+import com.uow.assignment.view.SideMenu;
 
 public class MainMenuFrame extends JFrame {
 	private User user;
@@ -49,6 +53,17 @@ public class MainMenuFrame extends JFrame {
 		});
 		btnLogout.setBounds(693, 1, 88, 29);
 		contentPane.add(btnLogout);
+		
+		MainView mview = new MainView(user);
+		getContentPane().add(mview);
+		mview.setBounds(90, 34, 697, 428);
+		mview.setBorder(BorderFactory.createLineBorder(Color.black));
+		mview.setLayout(null);
+		
+		SideMenu sideMenu = new SideMenu(mview, user);
+		sideMenu.setBounds(6, 34, 81, 428);
+		sideMenu.setBorder(BorderFactory.createLineBorder(Color.black));
+		contentPane.add(sideMenu);
 	}
 
 	private void logoutAction() {

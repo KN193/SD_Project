@@ -1,7 +1,23 @@
 package com.uow.assignment.model;
 
 public class User {
-	String userName, pwd, roles;
+	String userName, pwd, roles, ID;
+
+	public User(String userName, String pwd, String roles, String iD) {
+		super();
+		this.userName = userName;
+		this.pwd = pwd;
+		this.roles = roles;
+		ID = iD;
+	}
+
+	public String getID() {
+		return ID;
+	}
+
+	public void setID(String iD) {
+		ID = iD;
+	}
 
 	public User(){};
 	
