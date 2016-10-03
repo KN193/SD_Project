@@ -11,6 +11,12 @@ public class User {
 		this.pwd = pwd;
 		this.roles = roles;
 	}
+	
+	public User(String userName, String pwd) {
+		super();
+		this.userName = userName;
+		this.pwd = pwd;
+	}
 
 	public String getUserName() {
 		return userName;

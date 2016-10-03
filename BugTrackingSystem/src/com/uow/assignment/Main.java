@@ -4,7 +4,11 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 
+import com.uow.assignment.DAO.UsersDAO;
+import com.uow.assignment.model.User;
+import com.uow.assignment.utility.StringEncryptor;
 import com.uow.assignment.view.LoginView;
+import com.uow.assignment.view.frame.LoginFrame;
 
 public class Main {
 
@@ -34,17 +38,20 @@ public class Main {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 381, 181);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame = new LoginFrame();
+//		frame = new JFrame();
+//		frame.setBounds(100, 100, 381, 181);
+//		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		
+//		LoginView login = new LoginView();
+//		frame.getContentPane().add(login);
+//		login.setLayout(null);
 		
-		LoginView login = new LoginView();
-		frame.getContentPane().add(login);
-		login.setLayout(null);
-		
+//		User test = new User("kim", new StringEncryptor().encrypted("123456"), "Developer");
+//		new UsersDAO().createUser(test);
 	}
 
 }
