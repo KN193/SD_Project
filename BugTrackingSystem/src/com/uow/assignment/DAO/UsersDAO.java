@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import com.uow.assignment.model.User;
 
@@ -53,5 +54,30 @@ public class UsersDAO {
 			return null;
 		}
 		
+	}
+
+	public ArrayList<User> getAllUser() {
+		Connection conn = MySQLConnection.getConnection();
+		try {
+			ArrayList<User> usrs = new ArrayList<User>();
+			PreparedStatement stt = conn.prepareStatement("SELECT ID, userName FROM Users");
+			
+			ResultSet rs = stt.executeQuery();
+			while (rs.next()) {
+				String usrName = rs.getString("userName");
+				int id = rs.getInt("ID");
+				User returnedUser = new User();
+				returnedUser.setUserName(usrName);
+				returnedUser.setID(id+"");
+				usrs.add(returnedUser);
+			}
+			stt.close();
+			conn.close();
+			
+			return usrs;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

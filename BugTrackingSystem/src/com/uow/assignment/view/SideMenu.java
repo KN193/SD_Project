@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.uow.assignment.model.User;
+import com.uow.assignment.view.user.BugView;
 import com.uow.assignment.view.user.UserView;
 
 public class SideMenu extends JPanel {
@@ -44,6 +45,16 @@ public class SideMenu extends JPanel {
 		
 		// Ticket button
 		JLabel lblBug = new JLabel("");
+		lblBug.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				JPanel content = (JPanel) mview.getComponent(0);
+				content.removeAll();
+				BugView bugView = new BugView(user);
+				content.add(bugView);
+				bugView.setBounds(0, 0, 695, 428);
+				bugView.setBorder(BorderFactory.createLineBorder(Color.black));
+			}
+		});
 		lblBug.setIcon(new ImageIcon("res/icon/png/ticket_4.png"));
 		lblBug.setHorizontalAlignment(SwingConstants.CENTER);
 		lblBug.setBounds(6, 86, 70, 68);
