@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.uow.assignment.model.User;
-import com.uow.assignment.view.user.BugView;
 import com.uow.assignment.view.user.UserView;
 
 public class SideMenu extends JPanel {
@@ -49,7 +48,7 @@ public class SideMenu extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				JPanel content = (JPanel) mview.getComponent(0);
 				content.removeAll();
-				BugView bugView = new BugView(user);
+				TicketView bugView = new TicketView(user);
 				content.add(bugView);
 				bugView.setBounds(0, 0, 695, 428);
 				bugView.setBorder(BorderFactory.createLineBorder(Color.black));

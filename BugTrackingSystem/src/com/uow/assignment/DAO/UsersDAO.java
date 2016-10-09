@@ -13,10 +13,11 @@ public class UsersDAO {
 	public void createUser(User usr) {
 		Connection conn = MySQLConnection.getConnection();
 		try {
-			PreparedStatement stt = conn.prepareStatement("INSERT INTO Users (userName, password, roles) values(?,?,?)");
+			PreparedStatement stt = conn.prepareStatement("INSERT INTO Users (userName, password, roles, email) values(?,?,?,?)");
 			stt.setString(1, usr.getUserName());
 			stt.setString(2, usr.getPwd());
 			stt.setString(3, usr.getRoles());
+			stt.setString(4, usr.getEmail());
 			
 			stt.executeUpdate();
 			stt.close();
@@ -39,11 +40,13 @@ public class UsersDAO {
 			while (rs.next()) {
 				String usrName = rs.getString("userName");
 				String roles = rs.getString("roles");
+				String email = rs.getString("email");
 				int id = rs.getInt("ID");
 				returnedUser = new User();
 				returnedUser.setRoles(roles);
 				returnedUser.setUserName(usrName);
 				returnedUser.setID(id+"");
+				returnedUser.setEmail(email);
 			}
 			stt.close();
 			conn.close();
@@ -60,15 +63,17 @@ public class UsersDAO {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			ArrayList<User> usrs = new ArrayList<User>();
-			PreparedStatement stt = conn.prepareStatement("SELECT ID, userName FROM Users");
+			PreparedStatement stt = conn.prepareStatement("SELECT ID, userName, email FROM Users");
 			
 			ResultSet rs = stt.executeQuery();
 			while (rs.next()) {
 				String usrName = rs.getString("userName");
+				String email = rs.getString("email");
 				int id = rs.getInt("ID");
 				User returnedUser = new User();
 				returnedUser.setUserName(usrName);
 				returnedUser.setID(id+"");
+				returnedUser.setEmail(email);
 				usrs.add(returnedUser);
 			}
 			stt.close();

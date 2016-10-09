@@ -2,25 +2,30 @@ package com.uow.assignment.model;
 
 import java.util.Date;
 
-public class Bug {
+public class Ticket {
 
-	private String ID, Description, Priority, Status;
+	private String ID, description;
+	private Component component;
+	private Priority priority;
+	private Status status;
 	private String patch;
 	private User assignedUser, reportedUser;
 	private Date creationTime;
 	
-	public Bug(String description, String priority, String status,
-			User assignedUser, User reportedUser, Date creationTime) {
+	public Ticket(String id, String description, Priority priority, Status status,
+			User assignedUser, User reportedUser, Date creationTime, Component component) {
 		super();
-		Description = description;
-		Priority = priority;
-		Status = status;
+		this.ID = id;
+		this.description = description;
+		this.priority = priority;
+		this.status = status;
 		this.assignedUser = assignedUser;
 		this.reportedUser = reportedUser;
 		this.creationTime = creationTime;
+		this.component = component;
 	}
 	
-	public Bug(){};
+	public Ticket(){};
 	public Date getCreationTime() {
 		return creationTime;
 	}
@@ -34,22 +39,22 @@ public class Bug {
 		ID = iD;
 	}
 	public String getDescription() {
-		return Description;
+		return description;
 	}
 	public void setDescription(String description) {
-		Description = description;
+		this.description = description;
 	}
-	public String getPriority() {
-		return Priority;
+	public Priority getPriority() {
+		return priority;
 	}
-	public void setPriority(String priority) {
-		Priority = priority;
+	public void setPriority(Priority priority) {
+		this.priority = priority;
 	}
-	public String getStatus() {
-		return Status;
+	public Status getStatus() {
+		return status;
 	}
-	public void setStatus(String status) {
-		Status = status;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 	public String getPatch() {
 		return patch;
@@ -68,5 +73,11 @@ public class Bug {
 	}
 	public void setReportedUser(User reportedUser) {
 		this.reportedUser = reportedUser;
+	}
+	public Component getComponent() {
+		return component;
+	}
+	public void setComponent(Component component) {
+		this.component = component;
 	}
 }

@@ -55,10 +55,11 @@ public class MainMenuFrame extends JFrame {
 		contentPane.add(btnLogout);
 		
 		MainView mview = new MainView(user);
-		getContentPane().add(mview);
+//		getContentPane().add(mview);
+//		mview.setLayout(null);
 		mview.setBounds(90, 34, 697, 428);
-		mview.setBorder(BorderFactory.createLineBorder(Color.black));
-		mview.setLayout(null);
+//		mview.setBorder(BorderFactory.createLineBorder(Color.black));
+		contentPane.add(mview);
 		
 		SideMenu sideMenu = new SideMenu(mview, user);
 		sideMenu.setBounds(6, 34, 81, 428);

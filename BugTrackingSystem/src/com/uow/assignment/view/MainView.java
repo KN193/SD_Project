@@ -1,12 +1,11 @@
 package com.uow.assignment.view;
 
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JInternalFrame;
-import javax.swing.JDesktopPane;
-import javax.swing.JTabbedPane;
 
 import com.uow.assignment.model.User;
-import com.uow.assignment.view.user.UserView;
 
 public class MainView extends JPanel {
 
@@ -20,5 +19,6 @@ public class MainView extends JPanel {
 		panel.setBounds(0, 0, 708, 428);
 		add(panel);
 		panel.setLayout(null);
+		panel.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 }

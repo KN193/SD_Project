@@ -1,16 +1,25 @@
 package com.uow.assignment.model;
 
 public class User {
-	String userName, pwd, roles, ID;
+	String userName, pwd, roles, ID, email;
 
-	public User(String userName, String pwd, String roles, String iD) {
+	public User(String userName, String pwd, String roles, String iD, String email) {
 		super();
 		this.userName = userName;
 		this.pwd = pwd;
 		this.roles = roles;
 		ID = iD;
+		this.email = email;
 	}
 
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	public String getID() {
 		return ID;
 	}

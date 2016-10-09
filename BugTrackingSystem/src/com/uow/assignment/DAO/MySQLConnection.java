@@ -15,6 +15,8 @@ public class MySQLConnection {
 		dataSource.setPassword("123456");
 		dataSource.setServerName("127.0.0.1");
 		dataSource.setDatabaseName("BTS");
+//		dataSource.setRequireSSL(true);
+//		dataSource.setUseSSL(true);
 		try {
 			if (conn == null || conn.isClosed()) {
 				conn = dataSource.getConnection();

@@ -7,7 +7,12 @@ import com.uow.assignment.model.User;
 
 public class UserManager {
 	private UsersDAO usersDAO =  new UsersDAO();
-	private ArrayList<User> allUser = null;
+	private static ArrayList<User> allUser = new ArrayList<User>();
+	
+	public UserManager(){
+		if (allUser.size() == 0)
+			allUser = usersDAO.getAllUser();
+	}
 	
 	public ArrayList<User> getAllUser() {
 		return allUser;
@@ -39,6 +44,16 @@ public class UserManager {
 		User returnedUser =  null;
 		for (User u : allUser) {
 			if (u.getUserName().equalsIgnoreCase(selectedItem)) {
+				returnedUser = u;
+			}
+		}
+		return returnedUser;
+	}
+	
+	public User findByUserID(int id) {
+		User returnedUser =  null;
+		for (User u : allUser) {
+			if (u.getID().equals(id+"")) {
 				returnedUser = u;
 			}
 		}

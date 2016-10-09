@@ -21,6 +21,7 @@ public class UserView extends JPanel {
 		JLabel name = new JLabel("New label");
 		name.setBounds(103, 20, 153, 16);
 		add(name);
+		name.setText(usr.getUserName());
 		
 		JLabel lblEmail = new JLabel("Email: ");
 		lblEmail.setBounds(30, 48, 61, 16);
@@ -29,6 +30,7 @@ public class UserView extends JPanel {
 		JLabel email = new JLabel("New label");
 		email.setBounds(103, 48, 153, 16);
 		add(email);
+		email.setText(usr.getEmail());
 		
 		
 	}

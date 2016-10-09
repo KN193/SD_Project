@@ -1,4 +1,4 @@
-package com.uow.assignment.view;
+package com.uow.assignment.view.component;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
