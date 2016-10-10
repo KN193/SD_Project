@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import com.uow.assignment.DAO.UsersDAO;
+import com.uow.assignment.controller.ComponentManager;
+import com.uow.assignment.controller.PriorityManager;
+import com.uow.assignment.controller.StatusManager;
+import com.uow.assignment.controller.UserManager;
 import com.uow.assignment.model.User;
 import com.uow.assignment.utility.StringEncryptor;
 import com.uow.assignment.view.LoginView;
@@ -42,6 +46,14 @@ public class Main {
 	 */
 	private void initialize() {
 		frame = new LoginFrame();
+		
+		// Initialize all Manager Components
+		
+		PriorityManager primng = new PriorityManager();
+		StatusManager sttmng = new StatusManager();
+		UserManager usrmng = new UserManager();
+		ComponentManager cpn = new ComponentManager();
+		
 //		frame = new JFrame();
 //		frame.setBounds(100, 100, 381, 181);
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

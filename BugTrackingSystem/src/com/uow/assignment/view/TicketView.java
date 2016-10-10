@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
@@ -16,8 +17,13 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.MatteBorder;
+import javax.swing.table.DefaultTableModel;
 
 import org.jdatepicker.impl.JDatePickerImpl;
 
@@ -29,7 +35,10 @@ import com.uow.assignment.model.Component;
 import com.uow.assignment.model.Status;
 import com.uow.assignment.model.Ticket;
 import com.uow.assignment.model.User;
+import com.uow.assignment.utility.DateFormatter;
 import com.uow.assignment.view.component.CustomCombobox;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class TicketView extends JPanel {
 
@@ -43,6 +52,11 @@ public class TicketView extends JPanel {
 	private UserManager usrmng = new UserManager();
 	private JDatePickerImpl datePicker;
 	private JPanel bug_detail_panel;
+	private JTable ticketTable;
+	private ArrayList<Ticket> allTickets;
+	private final CardLayout cardLayout;
+	private final JPanel content_panel;
+	private JPanel bug_list_panel, new_bug_panel;
 	/**
 	 * Create the panel.
 	 * @param user 
@@ -57,34 +71,28 @@ public class TicketView extends JPanel {
 		menu_panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		add(menu_panel);
 		
-		final JPanel content_panel = new JPanel();
-		final CardLayout cardLayout = new CardLayout(0, 0);
+		content_panel = new JPanel();
+		cardLayout = new CardLayout(0, 0);
 		content_panel.setBounds(0, 32, 695, 395);
 		add(content_panel);
 		content_panel.setBorder(BorderFactory.createLineBorder(Color.black));
 		content_panel.setLayout(cardLayout);
 		
-		JPanel bug_list_panel = new JPanel();
+		bug_list_panel = new JPanel();
 		content_panel.add(bug_list_panel, "bug_list");
 		bug_list_panel.setLayout(null);
-		
-		JLabel lblNewLabel = new JLabel("bug list");
-		lblNewLabel.setBounds(26, 21, 61, 16);
-		bug_list_panel.add(lblNewLabel);
+		initializeTable();
 		
 		bug_detail_panel = new JPanel();
 		content_panel.add(bug_detail_panel, "bug_detail");
 		bug_detail_panel.setLayout(null);
 		
-		JPanel new_bug_panel = new JPanel();
+		new_bug_panel = new JPanel();
 		content_panel.add(new_bug_panel, "new_bug");
 		new_bug_panel.setLayout(null);
+		initializeNewBug();
 		
-		JLabel lblNewLabel_1 = new JLabel("Create a new Bug");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		lblNewLabel_1.setBounds(0, 18, 693, 33);
-		new_bug_panel.add(lblNewLabel_1);
+		
 		
 //		JLabel lblcreateDate = new JLabel("Created Date:");
 //		lblcreateDate.setBounds(6, 34, 106, 29);
@@ -101,22 +109,6 @@ public class TicketView extends JPanel {
 //		datePicker.setBounds(124, 34, 202, 29);
 //		new_bug_panel.add(datePicker);
 		
-		JLabel lblDes = new JLabel("Description:");
-		lblDes.setBounds(6, 92, 106, 29);
-		new_bug_panel.add(lblDes);
-		
-		des = new JTextArea();
-		des.setBounds(124, 98, 331, 213);
-		new_bug_panel.add(des);
-		
-		JLabel lblPriority = new JLabel("Component:");
-		lblPriority.setBounds(6, 63, 106, 29);
-		new_bug_panel.add(lblPriority);
-		
-		component_cbb = new JComboBox();
-		component_cbb.setModel(new DefaultComboBoxModel(commng.getComponentList()));
-		component_cbb.setBounds(124, 65, 119, 27);
-		new_bug_panel.add(component_cbb);
 		
 //		JLabel lblAssignedusr = new JLabel("Assign To:");
 //		lblAssignedusr.setBounds(6, 297, 106, 29);
@@ -128,26 +120,11 @@ public class TicketView extends JPanel {
 //		usr_cbb.setBounds(124, 299, 119, 27);
 //		new_bug_panel.add(usr_cbb);
 		
-		JButton btnCreate = new JButton("Create");
-		btnCreate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Ticket ticket = recordNewBug();
-				cardLayout.show(content_panel, "bug_detail");
-				TicketDetailView view = new TicketDetailView(ticket, bug_detail_panel);
-				bug_detail_panel.add(view);
-			}
-		});
-		btnCreate.setBounds(126, 358, 117, 29);
-		new_bug_panel.add(btnCreate);
-		
-		JButton btnReset = new JButton("Reset");
-		btnReset.setBounds(243, 358, 117, 29);
-		new_bug_panel.add(btnReset);
-		
 		JButton bugListBtn = new JButton("");
 		bugListBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(content_panel, "bug_list");
+				initializeTable();
 			}
 		});
 		bugListBtn.setIcon(new ImageIcon("res/icon/png/reports_7.png"));
@@ -157,12 +134,125 @@ public class TicketView extends JPanel {
 		newBugBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(content_panel, "new_bug");
+				initializeNewBug();
 			}
 		});
 		newBugBtn.setBackground(Color.WHITE);
 		newBugBtn.setIcon(new ImageIcon("res/icon/png/ticket1_7.png"));
 		menu_panel.add(newBugBtn);
 		
+	}
+	
+	private void initializeNewBug() {
+		new_bug_panel.removeAll();
+		
+		JLabel lblNewLabel_1 = new JLabel("Create a new Bug");
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNewLabel_1.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		lblNewLabel_1.setBounds(0, 18, 693, 33);
+		new_bug_panel.add(lblNewLabel_1);
+		
+		JLabel lblDes = new JLabel("Description:");
+		lblDes.setBounds(6, 92, 106, 29);
+		new_bug_panel.add(lblDes);
+		
+		des = new JTextArea();
+		des.setBounds(124, 98, 331, 213);
+		new_bug_panel.add(des);
+		
+		JLabel lblComponent = new JLabel("Component:");
+		lblComponent.setBounds(6, 63, 106, 29);
+		new_bug_panel.add(lblComponent);
+		
+		component_cbb = new JComboBox();
+		component_cbb.setModel(new DefaultComboBoxModel(commng.getComponentList()));
+		component_cbb.setBounds(124, 65, 119, 27);
+		new_bug_panel.add(component_cbb);
+		
+		JButton btnCreate = new JButton("Create");
+		btnCreate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Ticket ticket = recordNewBug();
+				cardLayout.show(content_panel, "bug_detail");
+				initializeBugDetail(ticket);
+			}
+
+		});
+		btnCreate.setBounds(126, 358, 117, 29);
+		new_bug_panel.add(btnCreate);
+		
+		JButton btnReset = new JButton("Reset");
+		btnReset.setBounds(243, 358, 117, 29);
+		new_bug_panel.add(btnReset);
+		
+		new_bug_panel.revalidate();;
+		new_bug_panel.repaint();
+	}
+
+	private void initializeBugDetail(Ticket ticket) {
+		bug_detail_panel.removeAll();
+		TicketDetailView view = new TicketDetailView(ticket, bug_detail_panel);
+		bug_detail_panel.add(view);
+		bug_detail_panel.revalidate();
+		bug_detail_panel.repaint();
+	}
+
+	public void initializeTable() {
+		allTickets = bugmng.getAllTicket();
+		
+		if (allTickets.size() == 0) {
+			return;
+		}
+		
+		Object[] columns = {"ID", "Priority", "Status", "Assigned User", "Component", "Creation Date"};
+		DefaultTableModel tableModel = new DefaultTableModel(columns, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column){  
+		          return false;  
+		    }
+			
+		}; // create with zero rows then will continue to add rows
+		tableModel.setColumnIdentifiers(columns);
+		ticketTable = new JTable(tableModel);
+		ticketTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) { // double right click
+					selectRow();
+				}
+			}
+		});
+		
+		for (Ticket t : allTickets) {
+			String[] row = { t.getID(), // ID
+							t.getPriority() == null ? "":t.getPriority().getName(), // priority
+							t.getStatus() == null ? "":t.getStatus().getName(), // status
+							t.getAssignedUser() == null ? "":t.getAssignedUser().getUserName(), // assigned user
+							t.getComponent() == null ? "":t.getComponent().getName(), // component
+							new DateFormatter().valueToString(t.getCreationTime().getTime()), // creation date
+			};
+			tableModel.addRow(row);
+		}
+		
+		ticketTable.setBounds(6, 21, 681, 260);
+		JScrollPane scroll = new JScrollPane(ticketTable);
+		scroll.setBounds(6, 21, 681, 315);
+        ticketTable.setFillsViewportHeight(true);
+//        ticketTable.setForeground(Color.RED);
+        ticketTable.setRowHeight(30);
+        
+        ticketTable.setGridColor(Color.BLACK);
+        bug_list_panel.removeAll();
+        bug_list_panel.add(scroll);
+        bug_list_panel.revalidate();
+        bug_list_panel.repaint();
+	}
+
+	private void selectRow() {
+		int selectedRow = ticketTable.convertRowIndexToModel(ticketTable.getSelectedRow());
+		Ticket ticket = allTickets.get(selectedRow);
+		cardLayout.show(content_panel, "bug_detail");
+		initializeBugDetail(ticket);
 	}
 	
 	private Ticket recordNewBug () {

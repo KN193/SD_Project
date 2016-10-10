@@ -3,8 +3,14 @@ package com.uow.assignment.view;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,7 +27,7 @@ public class TicketDetailView extends JPanel {
 	private Ticket ticket;
 	private JLabel priorityTxt;
 	private JLabel statusTxt;
-	private JLabel lblAssignedUser, assignedUserTxt;
+	private JLabel lblAssignedUser, assignedUserTxt, patchTxt;
 	private TicketManager tkmng = new TicketManager();
 	private StatusManager sttmng = new StatusManager();
 	private PriorityManager primng = new PriorityManager();
@@ -32,7 +38,7 @@ public class TicketDetailView extends JPanel {
 	 */
 	public TicketDetailView(final Ticket ticket, final JPanel bug_detail_panel) {
 		this.ticket = ticket;
-		setBounds(0, 32, 695, 395);
+		setBounds(0, 32, 695, 379);
 		setLayout(null);
 		
 		JLabel lblBugId = new JLabel("Bug Id:");
@@ -102,7 +108,7 @@ public class TicketDetailView extends JPanel {
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel.setBounds(0, 308, 695, 40);
+		panel.setBounds(0, 308, 695, 69);
 		add(panel);
 		
 		JButton btnPriority = new JButton("Set Priority");
@@ -112,7 +118,7 @@ public class TicketDetailView extends JPanel {
 			    String input = (String) JOptionPane.showInputDialog(getParent(), "Set Priority",
 			        "Set Priority", JOptionPane.QUESTION_MESSAGE, null,
 			        choices, // Array of choices
-			        choices[1]); // Initial choice
+			        choices[0]); // Initial choice
 			    
 			    updateTicketPriority(input);
 			    priorityTxt.setText(input);
@@ -128,7 +134,7 @@ public class TicketDetailView extends JPanel {
 			    String input = (String) JOptionPane.showInputDialog(getParent(), "Set Status",
 			        "Set Status", JOptionPane.QUESTION_MESSAGE, null,
 			        choices, // Array of choices
-			        choices[1]); // Initial choice
+			        choices[0]); // Initial choice
 			    
 			    updateTicketStatus(input);
 			    statusTxt.setText(input);
@@ -143,7 +149,7 @@ public class TicketDetailView extends JPanel {
 			    String input = (String) JOptionPane.showInputDialog(getParent(), "Assign to",
 			        "Assign Ticket", JOptionPane.QUESTION_MESSAGE, null,
 			        choices, // Array of choices
-			        choices[1]); // Initial choice
+			        choices[0]); // Initial choice
 			    
 			    updateTicketAssign(input);
 			    assignedUserTxt.setText(input);
@@ -153,11 +159,72 @@ public class TicketDetailView extends JPanel {
 		panel.add(btnAssignTicket);
 		
 		JButton btnAddPatch = new JButton("Add Patch");
+		btnAddPatch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				chooseFile();
+			}
+
+		});
 		panel.add(btnAddPatch);
+		
+		JButton btnDownloadPatch = new JButton("Download Patch");
+		btnDownloadPatch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				savePatch();
+			}
+
+		});
+		panel.add(btnDownloadPatch);
 		
 		JButton btnEditTicket = new JButton("Edit Ticket");
 		panel.add(btnEditTicket);
 		
+		JLabel lblAttachedPatch = new JLabel("Attached patch:");
+		lblAttachedPatch.setBounds(443, 62, 100, 16);
+		add(lblAttachedPatch);
+		
+		patchTxt = new JLabel("No patch attached");
+		patchTxt.setBounds(550, 62, 139, 16);
+		add(patchTxt);
+		
+	}
+	
+	private void savePatch() {
+		JFileChooser fileChooser = new JFileChooser();
+		int returnedValue = fileChooser.showSaveDialog(this);
+		if (returnedValue == JFileChooser.APPROVE_OPTION) {
+			String fileName = fileChooser.getSelectedFile().getName();
+			String fullPath = fileChooser.getCurrentDirectory().getAbsolutePath();
+			InputStream in = tkmng.getTicketPatch(ticket);
+			
+			OutputStream f;
+			try {
+				f = new FileOutputStream(new File(fullPath + "/" + fileName));
+
+				int c = 0;
+				while ((c = in.read()) > -1) {
+					f.write(c);
+				}
+				f.close();
+				in.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+        
+	}
+	
+	private void chooseFile() {
+		JFileChooser fileChooser = new JFileChooser();
+        int returnedValue = fileChooser.showOpenDialog(this);
+        if (returnedValue == JFileChooser.APPROVE_OPTION) {
+          File selectedFile = fileChooser.getSelectedFile();
+          ticket.setPatch(selectedFile);
+          tkmng.addTicketPatch(ticket);
+        }
+        
+        patchTxt.setText("Patch is attached");
 	}
 	
 	private void updateTicketPriority(String input) {

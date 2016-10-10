@@ -22,6 +22,7 @@ public class PriorityDAO {
 				Priority returnedPri = new Priority(id, name);
 				priorities.add(returnedPri);
 			}
+			rs.close();
 			stt.close();
 			conn.close();
 			

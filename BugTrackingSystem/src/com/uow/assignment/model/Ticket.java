@@ -1,5 +1,6 @@
 package com.uow.assignment.model;
 
+import java.io.File;
 import java.util.Date;
 
 public class Ticket {
@@ -8,7 +9,7 @@ public class Ticket {
 	private Component component;
 	private Priority priority;
 	private Status status;
-	private String patch;
+	private File patch;
 	private User assignedUser, reportedUser;
 	private Date creationTime;
 	
@@ -56,10 +57,10 @@ public class Ticket {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	public String getPatch() {
+	public File getPatch() {
 		return patch;
 	}
-	public void setPatch(String patch) {
+	public void setPatch(File patch) {
 		this.patch = patch;
 	}
 	public User getAssignedUser() {

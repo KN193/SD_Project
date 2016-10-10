@@ -22,6 +22,7 @@ public class StatusDAO {
 				Status returnedStatus = new Status(id, name);
 				statuses.add(returnedStatus);
 			}
+			rs.close();
 			stt.close();
 			conn.close();
 			

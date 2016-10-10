@@ -22,6 +22,7 @@ public class ComponentDAO {
 				Component returnedCom = new Component(id, name);
 				components.add(returnedCom);
 			}
+			rs.close();
 			stt.close();
 			conn.close();
 			

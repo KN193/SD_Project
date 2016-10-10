@@ -48,6 +48,7 @@ public class UsersDAO {
 				returnedUser.setID(id+"");
 				returnedUser.setEmail(email);
 			}
+			rs.close();
 			stt.close();
 			conn.close();
 			
@@ -76,6 +77,7 @@ public class UsersDAO {
 				returnedUser.setEmail(email);
 				usrs.add(returnedUser);
 			}
+			rs.close();
 			stt.close();
 			conn.close();
 			

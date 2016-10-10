@@ -1,4 +1,4 @@
-package com.uow.assignment.model;
+package com.uow.assignment.utility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,15 +12,20 @@ public class DateFormatter extends AbstractFormatter {
     private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
 
     @Override
-    public Object stringToValue(String text) throws ParseException {
-        return dateFormatter.parseObject(text);
+    public Object stringToValue(String text){
+        try {
+			return dateFormatter.parseObject(text);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
     }
 
     @Override
-    public String valueToString(Object value) throws ParseException {
+    public String valueToString(Object value){
         if (value != null) {
-            Calendar cal = (Calendar) value;
-            return dateFormatter.format(cal.getTime());
+//            Calendar cal = (Calendar) value;
+            return dateFormatter.format(value);
         }
 
         return "";
