@@ -87,4 +87,52 @@ public class UsersDAO {
 			return null;
 		}
 	}
+
+	public void updateRoles(User input) {
+		Connection conn = MySQLConnection.getConnection();
+		try {
+			PreparedStatement stt = conn.prepareStatement("UPDATE Users SET roles = ? WHERE ID = ?");
+			stt.setString(1, input.getRoles());
+			stt.setInt(2, Integer.parseInt(input.getID()));
+			
+			stt.executeUpdate();
+			stt.close();
+			conn.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updateEmail(User input) {
+		Connection conn = MySQLConnection.getConnection();
+		try {
+			PreparedStatement stt = conn.prepareStatement("UPDATE Users SET email = ? WHERE ID = ?");
+			stt.setString(1, input.getEmail());
+			stt.setInt(2, Integer.parseInt(input.getID()));
+			
+			stt.executeUpdate();
+			stt.close();
+			conn.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void updatePassword(User input) {
+		Connection conn = MySQLConnection.getConnection();
+		try {
+			PreparedStatement stt = conn.prepareStatement("UPDATE Users SET password = ? WHERE ID = ?");
+			stt.setString(1, input.getPwd());
+			stt.setInt(2, Integer.parseInt(input.getID()));
+			
+			stt.executeUpdate();
+			stt.close();
+			conn.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

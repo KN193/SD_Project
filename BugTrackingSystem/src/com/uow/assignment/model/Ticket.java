@@ -12,9 +12,10 @@ public class Ticket {
 	private File patch;
 	private User assignedUser, reportedUser;
 	private Date creationTime;
+	private boolean isPatchAttached;
 	
 	public Ticket(String id, String description, Priority priority, Status status,
-			User assignedUser, User reportedUser, Date creationTime, Component component) {
+			User assignedUser, User reportedUser, Date creationTime, Component component,boolean isPatchAttached) {
 		super();
 		this.ID = id;
 		this.description = description;
@@ -24,6 +25,7 @@ public class Ticket {
 		this.reportedUser = reportedUser;
 		this.creationTime = creationTime;
 		this.component = component;
+		this.isPatchAttached = isPatchAttached;
 	}
 	
 	public Ticket(){};
@@ -80,5 +82,12 @@ public class Ticket {
 	}
 	public void setComponent(Component component) {
 		this.component = component;
+	}
+	public boolean isPatchAttached() {
+		return isPatchAttached;
+	}
+
+	public void setPatchAttached(boolean isPatchAttached) {
+		this.isPatchAttached = isPatchAttached;
 	}
 }

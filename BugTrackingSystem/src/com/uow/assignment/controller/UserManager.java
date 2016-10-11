@@ -60,4 +60,20 @@ public class UserManager {
 		return returnedUser;
 	}
 	
+	public void createUser(User user) {
+		usersDAO.createUser(user);
+	}
+
+	public void updateRoles(User input) {
+		usersDAO.updateRoles(input);
+	}
+
+	public void updateEmail(User input) {
+		usersDAO.updateEmail(input);
+	}
+
+	public void updatePassword(User input) {
+		usersDAO.updatePassword(input);
+	}
+	
 }

@@ -4,20 +4,37 @@ import java.util.Date;
 
 public class Comment {
 
-	private String content, ID;
+	private int ID;
+	private String content;
 	private Date createdDate;
 	private User commentUser;
+	private Ticket ticketCommented;
+	public Comment(String content, int ID, Date createdDate,
+			User commentUser, Ticket ticketCommented) {
+		super();
+		this.content = content;
+		this.ID = ID;
+		this.createdDate = createdDate;
+		this.commentUser = commentUser;
+		this.ticketCommented = ticketCommented;
+	}
+	public Ticket getTicketCommented() {
+		return ticketCommented;
+	}
+	public void setTicketCommented(Ticket ticketCommented) {
+		this.ticketCommented = ticketCommented;
+	}
 	public String getContent() {
 		return content;
 	}
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getID() {
+	public int getID() {
 		return ID;
 	}
-	public void setID(String iD) {
-		ID = iD;
+	public void setID(int iD) {
+		this.ID = iD;
 	}
 	public Date getCreatedDate() {
 		return createdDate;

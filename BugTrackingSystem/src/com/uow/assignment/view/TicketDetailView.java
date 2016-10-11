@@ -1,43 +1,55 @@
 package com.uow.assignment.view;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import com.uow.assignment.controller.PriorityManager;
+import com.uow.assignment.controller.ReputationManager;
 import com.uow.assignment.controller.StatusManager;
 import com.uow.assignment.controller.TicketManager;
 import com.uow.assignment.controller.UserManager;
+import com.uow.assignment.model.Reputation;
 import com.uow.assignment.model.Ticket;
+import com.uow.assignment.model.User;
+import com.uow.assignment.view.dialog.CommentDialog;
 
 public class TicketDetailView extends JPanel {
 
+	private User crrUsr;
 	private Ticket ticket;
 	private JLabel priorityTxt;
 	private JLabel statusTxt;
-	private JLabel lblAssignedUser, assignedUserTxt, patchTxt;
+	private JLabel lblAssignedUser, assignedUserTxt, patchTxt, lblLike, lblDislike;
+	private Reputation rep;
 	private TicketManager tkmng = new TicketManager();
 	private StatusManager sttmng = new StatusManager();
 	private PriorityManager primng = new PriorityManager();
 	private UserManager usrmng = new UserManager();
+	private ReputationManager repmng = new ReputationManager();
 	/**
 	 * Create the panel.
 	 * @param bug_detail_panel 
 	 */
-	public TicketDetailView(final Ticket ticket, final JPanel bug_detail_panel) {
+	public TicketDetailView(final Ticket ticket, final User crrUsr, final JPanel bug_detail_panel) {
 		this.ticket = ticket;
+		this.crrUsr = crrUsr;
 		setBounds(0, 32, 695, 379);
 		setLayout(null);
 		
@@ -179,14 +191,110 @@ public class TicketDetailView extends JPanel {
 		JButton btnEditTicket = new JButton("Edit Ticket");
 		panel.add(btnEditTicket);
 		
+		JButton btnCommentTicket = new JButton("Comment Ticket");
+		btnCommentTicket.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CommentDialog dialog = new CommentDialog(ticket, crrUsr, SwingUtilities.windowForComponent(getParent()));
+				dialog.setModal(true);
+				dialog.setVisible(true);
+			}
+		});
+		panel.add(btnCommentTicket);
+		
 		JLabel lblAttachedPatch = new JLabel("Attached patch:");
 		lblAttachedPatch.setBounds(443, 62, 100, 16);
 		add(lblAttachedPatch);
 		
-		patchTxt = new JLabel("No patch attached");
+		String patchDisplay = ticket.isPatchAttached() ? "Patch is attached": "No patch attached";
+		patchTxt = new JLabel(patchDisplay);
 		patchTxt.setBounds(550, 62, 139, 16);
+		
+		if (ticket.isPatchAttached()) {
+			patchTxt.setForeground(Color.BLUE);
+		} else {
+			patchTxt.setForeground(Color.RED);
+		}
 		add(patchTxt);
 		
+		JLabel lblIsThisA = new JLabel("Is this a good bug:");
+		lblIsThisA.setBounds(443, 90, 129, 16);
+		add(lblIsThisA);
+		
+		lblLike = new JLabel("");
+		lblLike.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (rep == null) {
+					repmng.addReputation(ticket, crrUsr, true); // like
+					CheckReputation();
+					showNotifyMessage();
+				} else if (!rep.isLikeOrDislike()) { // if this already rated as dislike
+					repmng.updateReputation(ticket, crrUsr, true); // update to like
+					CheckReputation();
+					showNotifyMessage();
+				} else { // remove the reputation
+					repmng.removeReputation(ticket, crrUsr); // remove the reputation
+					CheckReputation();
+					showNotifyMessage();
+				}
+			}
+
+		});
+		lblLike.setIcon(new ImageIcon("res/icon/png/up_dis.png"));
+		lblLike.setBounds(584, 90, 34, 31);
+		add(lblLike);
+		
+		lblDislike = new JLabel("");
+		lblDislike.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (rep == null) {
+					repmng.addReputation(ticket, crrUsr, false); // dislike
+					CheckReputation();
+					showNotifyMessage();
+				} else if (rep.isLikeOrDislike()) { // if this already rated as like
+					repmng.updateReputation(ticket, crrUsr, false); // update to dislike
+					CheckReputation();
+					showNotifyMessage();
+				} else { // remove the reputation
+					repmng.removeReputation(ticket, crrUsr); // remove the reputation
+					CheckReputation();
+					showNotifyMessage();
+				}
+			}
+		});
+		lblDislike.setIcon(new ImageIcon("res/icon/png/down_dis.png"));
+		lblDislike.setBounds(630, 90, 34, 31);
+		add(lblDislike);
+		
+		CheckReputation();
+		
+	}
+	
+	private void CheckReputation() {
+		rep = repmng.checkReputation(ticket, crrUsr);
+		if (rep != null) {
+			if (rep.isLikeOrDislike()) {  //True is like, False is Dislike
+				lblLike.setIcon(new ImageIcon("res/icon/png/up_ava.png"));
+				lblDislike.setIcon(new ImageIcon("res/icon/png/down_dis.png"));
+			} else {
+				lblDislike.setIcon(new ImageIcon("res/icon/png/down_ava.png"));
+				lblLike.setIcon(new ImageIcon("res/icon/png/up_dis.png"));
+			}
+		} else {
+			lblLike.setIcon(new ImageIcon("res/icon/png/up_dis.png"));
+			lblDislike.setIcon(new ImageIcon("res/icon/png/down_dis.png"));
+		}
+	}
+
+	private void showNotifyMessage() {
+		if (rep == null) {
+			JOptionPane.showMessageDialog(this, "You have removed reputation for this ticket", "Reputation Changed", JOptionPane.INFORMATION_MESSAGE);
+		} else if (rep.isLikeOrDislike()) { // like
+			JOptionPane.showMessageDialog(this, "You have agreed that this ticket is good", "Reputation Changed", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(this, "You have agreed that this ticket is bad", "Reputation Changed", JOptionPane.INFORMATION_MESSAGE);
+		}
 	}
 	
 	private void savePatch() {
@@ -221,10 +329,12 @@ public class TicketDetailView extends JPanel {
         if (returnedValue == JFileChooser.APPROVE_OPTION) {
           File selectedFile = fileChooser.getSelectedFile();
           ticket.setPatch(selectedFile);
+          ticket.setPatchAttached(true);
           tkmng.addTicketPatch(ticket);
         }
         
         patchTxt.setText("Patch is attached");
+        patchTxt.setForeground(Color.BLUE);
 	}
 	
 	private void updateTicketPriority(String input) {

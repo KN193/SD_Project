@@ -29,7 +29,7 @@ public class TicketsDAO {
 			stt.setInt(2, bug.getStatus().getID());
 			// stt.setInt(4, Integer.parseInt(bug.getAssignedUser().getID()));
 			stt.setInt(3, Integer.parseInt(bug.getReportedUser().getID()));
-			stt.setDate(4, new java.sql.Date(bug.getCreationTime().getTime()));
+			stt.setTimestamp(4, new java.sql.Timestamp(bug.getCreationTime().getTime()));
 			stt.setInt(5, bug.getComponent().getID());
 
 			stt.executeUpdate();
@@ -60,7 +60,7 @@ public class TicketsDAO {
 	private Ticket findTicketByID(long id) {
 		try {
 			Connection conn = MySQLConnection.getConnection();
-			PreparedStatement stt = conn.prepareStatement("SELECT * FROM Tickets WHERE ID=?");
+			PreparedStatement stt = conn.prepareStatement("SELECT ID, description, status, priority, assignedUser, reportedUser, creationDate, component, isPatchAttached FROM Tickets WHERE ID=?");
 			stt.setLong(1, id);
 
 			ResultSet rs = stt.executeQuery();
@@ -74,6 +74,7 @@ public class TicketsDAO {
 				int reportedUser = rs.getInt("reportedUser");
 				int component = rs.getInt("component");
 				Date creationDate = rs.getDate("creationDate");
+				boolean isPatchAttached = rs.getBoolean("isPatchAttached");
 
 				Ticket toReturn = new Ticket(ticketID + "", description,
 						new PriorityManager().getPriorityByID(priority),
@@ -81,7 +82,8 @@ public class TicketsDAO {
 						new UserManager().findByUserID(assignedUser),
 						new UserManager().findByUserID(reportedUser),
 						creationDate,
-						new ComponentManager().getComponentByID(component));
+						new ComponentManager().getComponentByID(component),
+						isPatchAttached);
 
 				return toReturn;
 			}
@@ -173,9 +175,10 @@ public class TicketsDAO {
 			FileInputStream fin = new FileInputStream(ticket.getPatch());
 			
 			
-			PreparedStatement stt = conn.prepareStatement("UPDATE Tickets SET patch = ? WHERE ID = ?");
+			PreparedStatement stt = conn.prepareStatement("UPDATE Tickets SET patch = ?, isPatchAttached = ? WHERE ID = ?");
 			stt.setBinaryStream(1, (InputStream)fin, (int)ticket.getPatch().length());
-			stt.setInt(2, Integer.parseInt(ticket.getID()));
+			stt.setBoolean(2, true);
+			stt.setInt(3, Integer.parseInt(ticket.getID()));
 			
 			stt.executeUpdate();
 			stt.close();
@@ -213,7 +216,7 @@ public class TicketsDAO {
 		try {
 			ArrayList<Ticket> list = new ArrayList<Ticket>();
 			Connection conn = MySQLConnection.getConnection();
-			PreparedStatement statement = conn.prepareStatement("SELECT ID, description, status, priority, assignedUser, reportedUser, creationDate, component FROM Tickets");
+			PreparedStatement statement = conn.prepareStatement("SELECT ID, description, status, priority, assignedUser, reportedUser, creationDate, component, isPatchAttached FROM Tickets");
 
 			ResultSet rSet = statement.executeQuery();
 
@@ -225,7 +228,8 @@ public class TicketsDAO {
 				int priority = rSet.getInt("priority");
 				int reportedUser = rSet.getInt("reportedUser");
 				int component = rSet.getInt("component");
-				Date creationDate = rSet.getDate("creationDate");
+				Date creationDate = rSet.getTimestamp("creationDate");
+				boolean isPatchAttached = rSet.getBoolean("isPatchAttached");
 
 				Ticket toReturn = new Ticket(ticketID + "", description,
 						new PriorityManager().getPriorityByID(priority),
@@ -233,7 +237,8 @@ public class TicketsDAO {
 						new UserManager().findByUserID(assignedUser),
 						new UserManager().findByUserID(reportedUser),
 						creationDate,
-						new ComponentManager().getComponentByID(component));
+						new ComponentManager().getComponentByID(component),
+						isPatchAttached);
 
 				list.add(toReturn);
 			}

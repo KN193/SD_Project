@@ -11,6 +11,13 @@ public class DateFormatter extends AbstractFormatter {
     private String datePattern = "yyyy-MM-dd";
     private SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
 
+    public DateFormatter(){};
+	public DateFormatter(String pattern) {
+		this.datePattern = pattern;
+		dateFormatter = null;
+		dateFormatter = new SimpleDateFormat(datePattern);
+	}
+	
     @Override
     public Object stringToValue(String text){
         try {

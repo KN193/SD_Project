@@ -191,7 +191,7 @@ public class TicketView extends JPanel {
 
 	private void initializeBugDetail(Ticket ticket) {
 		bug_detail_panel.removeAll();
-		TicketDetailView view = new TicketDetailView(ticket, bug_detail_panel);
+		TicketDetailView view = new TicketDetailView(ticket, crrUser, bug_detail_panel);
 		bug_detail_panel.add(view);
 		bug_detail_panel.revalidate();
 		bug_detail_panel.repaint();
@@ -240,6 +240,7 @@ public class TicketView extends JPanel {
         ticketTable.setFillsViewportHeight(true);
 //        ticketTable.setForeground(Color.RED);
         ticketTable.setRowHeight(30);
+        ticketTable.setAutoCreateRowSorter(true);
         
         ticketTable.setGridColor(Color.BLACK);
         bug_list_panel.removeAll();
