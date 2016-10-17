@@ -6,8 +6,14 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -20,35 +26,37 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import com.uow.assignment.controller.ComponentManager;
+import com.uow.assignment.controller.PriorityManager;
 import com.uow.assignment.controller.StatusManager;
 import com.uow.assignment.controller.TicketManager;
 import com.uow.assignment.controller.UserManager;
 import com.uow.assignment.model.Component;
+import com.uow.assignment.model.Priority;
 import com.uow.assignment.model.Status;
 import com.uow.assignment.model.Ticket;
 import com.uow.assignment.model.User;
 import com.uow.assignment.utility.DateFormatter;
 import com.uow.assignment.view.component.CustomCombobox;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class TicketView extends JPanel {
 
 	private TicketManager bugmng = new TicketManager();
 	private StatusManager sttmng = new StatusManager();
 	private ComponentManager commng = new ComponentManager();
+	private PriorityManager primng = new PriorityManager();
 	private User crrUser;
 	private JComboBox component_cbb;
 	private JTextArea des; 
-	private JButton newBugBtn,bugListBtn;
+	private JButton newBugBtn,bugListBtn, btnSearchBug;
 	private CustomCombobox usr_cbb;
 	private UserManager usrmng = new UserManager();
 	private JDatePickerImpl datePicker;
@@ -57,7 +65,15 @@ public class TicketView extends JPanel {
 	private ArrayList<Ticket> allTickets;
 	private final CardLayout cardLayout;
 	private final JPanel content_panel;
-	private JPanel bug_list_panel, new_bug_panel;
+	private JPanel bug_list_panel, new_bug_panel, bug_search_panel;
+	private JTextField txtIdsearch;
+	private JTextField txtPriSearch;
+	private JTextField txtSttSearch;
+	private JTextField txtAssUsrSearch;
+	private JTextField txtCompSearch;
+	private JLabel lblReportedUser;
+	private JTextField txtReprtdSearch;
+	private JButton btnSearch;
 	/**
 	 * Create the panel.
 	 * @param user 
@@ -82,7 +98,7 @@ public class TicketView extends JPanel {
 		bug_list_panel = new JPanel();
 		content_panel.add(bug_list_panel, "bug_list");
 		bug_list_panel.setLayout(null);
-		initializeTable();
+		initializeTable(true);
 		
 		bug_detail_panel = new JPanel();
 		content_panel.add(bug_detail_panel, "bug_detail");
@@ -93,21 +109,15 @@ public class TicketView extends JPanel {
 		new_bug_panel.setLayout(null);
 		initializeNewBug();
 		
+		bug_search_panel = new JPanel();
+		content_panel.add(bug_search_panel, "bug_search");
+		bug_search_panel.setLayout(null);
+		initializeBugSearch();
+		
 //		JLabel lblcreateDate = new JLabel("Created Date:");
 //		lblcreateDate.setBounds(6, 34, 106, 29);
 //		new_bug_panel.add(lblcreateDate);
 //		
-//		// Date picker open source
-//		UtilDateModel model = new UtilDateModel();
-//		Properties p = new Properties();
-//		p.put("text.today", "Today");
-//		p.put("text.month", "Month");
-//		p.put("text.year", "Year");
-//		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
-//		datePicker = new JDatePickerImpl(datePanel, new DateFormatter());
-//		datePicker.setBounds(124, 34, 202, 29);
-//		new_bug_panel.add(datePicker);
-		
 		
 //		JLabel lblAssignedusr = new JLabel("Assign To:");
 //		lblAssignedusr.setBounds(6, 297, 106, 29);
@@ -123,7 +133,7 @@ public class TicketView extends JPanel {
 		bugListBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(content_panel, "bug_list");
-				initializeTable();
+				initializeTable(true);
 			}
 		});
 		bugListBtn.setIcon(new ImageIcon("res/icon/png/reports_7.png"));
@@ -140,9 +150,169 @@ public class TicketView extends JPanel {
 		newBugBtn.setIcon(new ImageIcon("res/icon/png/ticket1_7.png"));
 		menu_panel.add(newBugBtn);
 		
+		btnSearchBug = new JButton("");
+		btnSearchBug.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				cardLayout.show(content_panel, "bug_search");
+				initializeBugSearch();
+			}
+		});
+		btnSearchBug.setIcon(new ImageIcon("res/icon/png/Search_16.png"));
+		menu_panel.add(btnSearchBug);
+		
 		filterRoles();
 	}
 	
+	protected void initializeBugSearch() {
+		bug_search_panel.removeAll();
+		
+		txtIdsearch = new JTextField();
+        txtIdsearch.setBounds(143, 60, 117, 26);
+        bug_search_panel.add(txtIdsearch);
+        txtIdsearch.setColumns(10);
+        
+        txtPriSearch = new JTextField();
+        txtPriSearch.setColumns(10);
+        txtPriSearch.setBounds(143, 88, 117, 26);
+        bug_search_panel.add(txtPriSearch);
+        
+        txtSttSearch = new JTextField();
+        txtSttSearch.setColumns(10);
+        txtSttSearch.setBounds(143, 116, 117, 26);
+        bug_search_panel.add(txtSttSearch);
+        
+        txtAssUsrSearch = new JTextField();
+        txtAssUsrSearch.setColumns(10);
+        txtAssUsrSearch.setBounds(143, 144, 117, 26);
+        bug_search_panel.add(txtAssUsrSearch);
+        
+        txtCompSearch = new JTextField();
+        txtCompSearch.setColumns(10);
+        txtCompSearch.setBounds(143, 172, 117, 26);
+        bug_search_panel.add(txtCompSearch);
+        
+		// Date picker open source
+		UtilDateModel model = new UtilDateModel();
+		Properties p = new Properties();
+		p.put("text.today", "Today");
+		p.put("text.month", "Month");
+		p.put("text.year", "Year");
+		JDatePanelImpl datePanel = new JDatePanelImpl(model, p);
+		datePicker = new JDatePickerImpl(datePanel, new DateFormatter());
+		datePicker.setBounds(406, 57, 202, 29);
+		bug_search_panel.add(datePicker);
+
+        JLabel lblId = new JLabel("ID");
+        lblId.setBounds(28, 65, 54, 16);
+        bug_search_panel.add(lblId);
+        
+        JLabel lblStatus = new JLabel("Priority");
+        lblStatus.setBounds(28, 93, 61, 16);
+        bug_search_panel.add(lblStatus);
+        
+        JLabel label = new JLabel("Status");
+        label.setBounds(28, 121, 61, 16);
+        bug_search_panel.add(label);
+        
+        JLabel lblAssignedUser = new JLabel("Assigned User");
+        lblAssignedUser.setBounds(28, 149, 103, 16);
+        bug_search_panel.add(lblAssignedUser);
+        
+        JLabel lblComponent_1 = new JLabel("Component");
+        lblComponent_1.setBounds(28, 177, 82, 16);
+        bug_search_panel.add(lblComponent_1);
+        
+        JLabel lblCreationDate = new JLabel("Creation Date");
+        lblCreationDate.setBounds(291, 65, 103, 16);
+        bug_search_panel.add(lblCreationDate);
+        
+        lblReportedUser = new JLabel("Reported User");
+        lblReportedUser.setBounds(28, 205, 103, 16);
+        bug_search_panel.add(lblReportedUser);
+        
+        txtReprtdSearch = new JTextField();
+        txtReprtdSearch.setColumns(10);
+        txtReprtdSearch.setBounds(143, 200, 117, 26);
+        bug_search_panel.add(txtReprtdSearch);
+        
+        btnSearch = new JButton("Search");
+        btnSearch.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		Map<String, Object> criteria = new HashMap<String, Object>();
+        		// get criteria
+        		String ID = txtIdsearch.getText();
+        		String pri = txtPriSearch.getText();
+        		String stt = txtSttSearch.getText();
+        		String assusr = txtAssUsrSearch.getText();
+        		String com = txtCompSearch.getText();
+        		String repusr = txtReprtdSearch.getText();
+        		Date creationDate = (Date) datePicker.getModel().getValue();
+        		
+        		if (!ID.equals("")) {
+        			criteria.put("ID", Integer.parseInt(ID));
+        		}
+        		
+        		if (!pri.equals("")) {
+        			Priority tmp = primng.getPriorityByName(pri);
+        			if (tmp != null) {
+        				criteria.put("priority", tmp.getID());
+        			} else {
+        				criteria.put("priority", null);
+        			}
+        		}
+        		
+        		if (!stt.equals("")) {
+        			Status tmp = sttmng.getStatusByName(stt);
+        			if (tmp != null) {
+        				criteria.put("status", tmp.getID());
+        			}else {
+        				criteria.put("status", null);
+        			}
+        		}
+        		
+        		if (!assusr.equals("")) {
+        			User tmp = usrmng.findByUserName(assusr);
+        			if (tmp != null) {
+        				criteria.put("assignedUser", Integer.parseInt(tmp.getID()));
+        			}else {
+        				criteria.put("assignedUser", null);
+        			}
+        		}
+        		
+        		if (!com.equals("")) {
+        			Component tmp = commng.getComponentByName(com);
+        			if (tmp != null) {
+        				criteria.put("component", tmp.getID());
+        			}else {
+        				criteria.put("component", null);
+        			}
+        		}
+        		
+        		if (!repusr.equals("")) {
+        			User tmp = usrmng.findByUserName(repusr);
+        			if (tmp != null) {
+        				criteria.put("reportedUser", Integer.parseInt(tmp.getID()));
+        			}else {
+        				criteria.put("reportedUser", null);
+        			}
+        		}
+        		
+        		if (creationDate != null) {
+        			criteria.put("creationDate",creationDate);
+        		}
+        		
+        		allTickets = bugmng.getTicketbyCriteria(criteria);
+        		initializeTable(false);
+        		cardLayout.show(content_panel, "bug_list");
+        	}
+        });
+        btnSearch.setBounds(222, 261, 117, 29);
+        bug_search_panel.add(btnSearch);
+        
+        bug_search_panel.revalidate();
+        bug_search_panel.repaint();
+	}
+
 	private void filterRoles() {
 		if (crrUser.getRoles().equals("Developer")) {
 			newBugBtn.setVisible(false);
@@ -216,7 +386,9 @@ public class TicketView extends JPanel {
 		bug_detail_panel.repaint();
 	}
 
-	public void initializeTable() {
+	public void initializeTable(boolean getAllTicket) {
+		bug_list_panel.removeAll();
+		if (getAllTicket)
 		allTickets = bugmng.getAllTicket();
 		
 		if (allTickets.size() == 0) {
@@ -255,15 +427,15 @@ public class TicketView extends JPanel {
 		
 		ticketTable.setBounds(6, 21, 681, 260);
 		JScrollPane scroll = new JScrollPane(ticketTable);
-		scroll.setBounds(6, 21, 681, 315);
+		scroll.setBounds(6, 6, 681, 381);
         ticketTable.setFillsViewportHeight(true);
 //        ticketTable.setForeground(Color.RED);
         ticketTable.setRowHeight(30);
         ticketTable.setAutoCreateRowSorter(true);
         
         ticketTable.setGridColor(Color.BLACK);
-        bug_list_panel.removeAll();
         bug_list_panel.add(scroll);
+        
         bug_list_panel.revalidate();
         bug_list_panel.repaint();
 	}
@@ -284,8 +456,6 @@ public class TicketView extends JPanel {
 //		User assignedUser = usrmng.findByUserName((String)usr_cbb.getSelectedItem());
 		User reportedUser = crrUser;
 		
-//		Calendar selectedValue = (Calendar) datePicker.getModel().getValue();
-//		Date creationDate = selectedValue.getTime();
 		Date creationDate = new Date();
 		Ticket newBug =  new Ticket();
 		newBug.setDescription(descr);

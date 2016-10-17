@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import com.uow.assignment.controller.ComponentManager;
 import com.uow.assignment.controller.PriorityManager;
@@ -218,6 +219,91 @@ public class TicketsDAO {
 			Connection conn = MySQLConnection.getConnection();
 			PreparedStatement statement = conn.prepareStatement("SELECT ID, description, status, priority, assignedUser, reportedUser, creationDate, component, isPatchAttached FROM Tickets");
 
+			ResultSet rSet = statement.executeQuery();
+
+			while (rSet.next()) {
+				int ticketID = rSet.getInt("ID");
+				String description = rSet.getString("description");
+				int assignedUser = rSet.getInt("assignedUser");
+				int status = rSet.getInt("status");
+				int priority = rSet.getInt("priority");
+				int reportedUser = rSet.getInt("reportedUser");
+				int component = rSet.getInt("component");
+				Date creationDate = rSet.getTimestamp("creationDate");
+				boolean isPatchAttached = rSet.getBoolean("isPatchAttached");
+
+				Ticket toReturn = new Ticket(ticketID + "", description,
+						new PriorityManager().getPriorityByID(priority),
+						new StatusManager().getStatusByID(status),
+						new UserManager().findByUserID(assignedUser),
+						new UserManager().findByUserID(reportedUser),
+						creationDate,
+						new ComponentManager().getComponentByID(component),
+						isPatchAttached);
+
+				list.add(toReturn);
+			}
+
+			rSet.close();
+			statement.close();
+			conn.close();
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public ArrayList<Ticket> getTicketbyCriteria(Map<String, Object> criteria) {
+		try {
+			ArrayList<Ticket> list = new ArrayList<Ticket>();
+			Connection conn = MySQLConnection.getConnection();
+//			PreparedStatement statement = conn.prepareStatement("SELECT ID, description, status, priority, assignedUser, reportedUser, creationDate, component, isPatchAttached FROM Tickets");
+			String sql = "SELECT ID, description, status, priority, assignedUser, reportedUser, creationDate, component, isPatchAttached FROM Tickets";
+			PreparedStatement statement;
+			int count = 0;
+
+			if (criteria.size() != 0) {
+				sql += " WHERE ";
+			}
+			// produce sql query fist
+			for (String key : criteria.keySet()) {
+				count++;
+//				if (key.equals("ID") || key.equals("Priority") || key.equals("Status") || key.equals("usGroup")
+//						|| key.equals("Type") || key.equals("Code") || key.equals("Color") || key.equals("Note")
+//						|| key.equals("ImgPath") || key.equals("Sold")) 
+//				{
+//					sql += key + " like ? ";
+//				}else {
+					sql += key + " = ?";
+//				}
+
+				if (criteria.size() != count) {
+					sql += " AND ";
+				}
+			}
+
+			statement = conn.prepareStatement(sql);
+			
+			count = 0;
+			//produce criteria for query
+			for (String key : criteria.keySet()) {
+				count++;
+				if (key.equals("ID") || key.equals("priority") || key.equals("status") || key.equals("assignedUser")
+						|| key.equals("component") || key.equals("reportedUser")) 
+				{
+					if (criteria.get(key) == null) {
+						statement.setString(count, "");
+					} else {
+						statement.setInt(count, (Integer)criteria.get(key));
+					}
+//					statement.setInt(count, (Integer)criteria.get(key));
+				} else if (key.equals("creationDate")) {
+					statement.setDate(count, new java.sql.Date( ((Date)criteria.get(key)).getTime() ));
+				}
+
+			}
+			
 			ResultSet rSet = statement.executeQuery();
 
 			while (rSet.next()) {

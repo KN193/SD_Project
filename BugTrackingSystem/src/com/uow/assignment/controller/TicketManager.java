@@ -2,6 +2,7 @@ package com.uow.assignment.controller;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.uow.assignment.DAO.TicketsDAO;
 import com.uow.assignment.model.Ticket;
@@ -40,5 +41,9 @@ private TicketsDAO bugsDAO =  new TicketsDAO();
 
 	public ArrayList<Ticket> getAllTicket() {
 		return bugsDAO.getAllTicket();
+	}
+	
+	public ArrayList<Ticket> getTicketbyCriteria(Map<String, Object> criteria) {
+		return bugsDAO.getTicketbyCriteria(criteria);
 	}
 }
