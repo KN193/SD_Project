@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 public class UserView extends JPanel {
 
 	User user;
+	private JPanel content_panel;
 	private UserManager usrmng = new UserManager();
 	private ReputationManager repmng = new ReputationManager();
 	private User crrUsr;
@@ -34,39 +35,48 @@ public class UserView extends JPanel {
 	public UserView(User usr) {
 		this.crrUsr = usr;
 		setLayout(null);
+		content_panel = new JPanel();
+		content_panel.setLayout(null);
+		content_panel.setBounds(6, 6, 703, 421);
+		add(content_panel);
 		
+		initializeView();
+		filterRoles();
+	}
+	
+	private void initializeView() {
 		JLabel lblName = new JLabel("Name:");
 		lblName.setBounds(30, 20, 61, 16);
-		add(lblName);
+		content_panel.add(lblName);
 		
 		JLabel name = new JLabel("New label");
 		name.setBounds(103, 20, 153, 16);
-		add(name);
-		name.setText(usr.getUserName());
+		content_panel.add(name);
+		name.setText(crrUsr.getUserName());
 		
 		JLabel lblEmail = new JLabel("Email: ");
 		lblEmail.setBounds(30, 48, 61, 16);
-		add(lblEmail);
+		content_panel.add(lblEmail);
 		
 		email = new JLabel("New label");
 		email.setBounds(103, 48, 153, 16);
-		add(email);
-		email.setText(usr.getEmail());
+		content_panel.add(email);
+		email.setText(crrUsr.getEmail());
 		
 		JLabel lblRole = new JLabel("Role:");
 		lblRole.setBounds(30, 76, 61, 16);
-		add(lblRole);
+		content_panel.add(lblRole);
 		
 		lblRolestxt = new JLabel("");
 		lblRolestxt.setBounds(103, 76, 153, 16);
-		add(lblRolestxt);
-		lblRolestxt.setText(usr.getRoles());
+		content_panel.add(lblRolestxt);
+		lblRolestxt.setText(crrUsr.getRoles());
 		
 		JPanel panel = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panel.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		panel.setBounds(6, 104, 686, 34);
-		add(panel);
+		content_panel.add(panel);
 		
 		btnEditRoles = new JButton("Edit Roles");
 		btnEditRoles.addActionListener(new ActionListener() {
@@ -124,25 +134,41 @@ public class UserView extends JPanel {
 		panel.add(btnCreateUser);
 		
 		btnFindUser = new JButton("Find User");
+		btnFindUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String[] choices = usrmng.getListOfUser();
+			    String input = (String) JOptionPane.showInputDialog(getParent(), "Choose User",
+			        "Choose User", JOptionPane.QUESTION_MESSAGE, null,
+			        choices, // Array of choices
+			        choices[0]); // Initial choice
+			    
+			    User tmp = usrmng.findByUserName(input);
+			    
+			    content_panel.removeAll();
+			    crrUsr = tmp;
+			    initializeView();
+			    content_panel.revalidate();
+			    content_panel.repaint();
+			}
+		});
 		panel.add(btnFindUser);
 		
 		JLabel lblReputation = new JLabel("Reputation:");
 		lblReputation.setBounds(303, 20, 77, 16);
-		add(lblReputation);
+		content_panel.add(lblReputation);
 		
 		int like = repmng.countLikeReputation(crrUsr, true);
 		JLabel lblTxtlike = new JLabel(like + " Like");
 		lblTxtlike.setBounds(392, 20, 61, 16);
-		add(lblTxtlike);
+		content_panel.add(lblTxtlike);
 		
 		int dislike = repmng.countLikeReputation(crrUsr, false);
 		JLabel txtDisLike = new JLabel(dislike + " Dislike");
 		txtDisLike.setBounds(465, 20, 61, 16);
-		add(txtDisLike);
+		content_panel.add(txtDisLike);
 		
-		filterRoles();
 	}
-	
+
 	protected void confirmOldPassword() {
 		PasswordChange pwdChange = new PasswordChange();
 		pwdChange.setPreferredSize(new Dimension(285, 77));

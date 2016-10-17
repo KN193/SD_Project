@@ -64,17 +64,19 @@ public class UsersDAO {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			ArrayList<User> usrs = new ArrayList<User>();
-			PreparedStatement stt = conn.prepareStatement("SELECT ID, userName, email FROM Users");
+			PreparedStatement stt = conn.prepareStatement("SELECT ID, userName, email, roles FROM Users");
 			
 			ResultSet rs = stt.executeQuery();
 			while (rs.next()) {
 				String usrName = rs.getString("userName");
 				String email = rs.getString("email");
+				String roles = rs.getString("roles");
 				int id = rs.getInt("ID");
 				User returnedUser = new User();
 				returnedUser.setUserName(usrName);
 				returnedUser.setID(id+"");
 				returnedUser.setEmail(email);
+				returnedUser.setRoles(roles);
 				usrs.add(returnedUser);
 			}
 			rs.close();
