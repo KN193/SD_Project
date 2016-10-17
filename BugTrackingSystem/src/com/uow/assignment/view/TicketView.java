@@ -48,6 +48,7 @@ public class TicketView extends JPanel {
 	private User crrUser;
 	private JComboBox component_cbb;
 	private JTextArea des; 
+	private JButton newBugBtn,bugListBtn;
 	private CustomCombobox usr_cbb;
 	private UserManager usrmng = new UserManager();
 	private JDatePickerImpl datePicker;
@@ -92,8 +93,6 @@ public class TicketView extends JPanel {
 		new_bug_panel.setLayout(null);
 		initializeNewBug();
 		
-		
-		
 //		JLabel lblcreateDate = new JLabel("Created Date:");
 //		lblcreateDate.setBounds(6, 34, 106, 29);
 //		new_bug_panel.add(lblcreateDate);
@@ -120,7 +119,7 @@ public class TicketView extends JPanel {
 //		usr_cbb.setBounds(124, 299, 119, 27);
 //		new_bug_panel.add(usr_cbb);
 		
-		JButton bugListBtn = new JButton("");
+		bugListBtn = new JButton("");
 		bugListBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(content_panel, "bug_list");
@@ -130,7 +129,7 @@ public class TicketView extends JPanel {
 		bugListBtn.setIcon(new ImageIcon("res/icon/png/reports_7.png"));
 		menu_panel.add(bugListBtn);
 		
-		JButton newBugBtn = new JButton("");
+		newBugBtn = new JButton("");
 		newBugBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(content_panel, "new_bug");
@@ -141,8 +140,28 @@ public class TicketView extends JPanel {
 		newBugBtn.setIcon(new ImageIcon("res/icon/png/ticket1_7.png"));
 		menu_panel.add(newBugBtn);
 		
+		filterRoles();
 	}
 	
+	private void filterRoles() {
+		if (crrUser.getRoles().equals("Developer")) {
+			newBugBtn.setVisible(false);
+			bugListBtn.setVisible(true);
+		} else if (crrUser.getRoles().equals("Reporter")) {
+			newBugBtn.setVisible(true);
+			bugListBtn.setVisible(true);
+		} else if (crrUser.getRoles().equals("Triager")) {
+			newBugBtn.setVisible(false);
+			bugListBtn.setVisible(true);
+		} else if (crrUser.getRoles().equals("Reviewer")) {
+			newBugBtn.setVisible(false);
+			bugListBtn.setVisible(true);
+		} else if (crrUser.getRoles().equals("Manager")) {
+			newBugBtn.setVisible(false);
+			bugListBtn.setVisible(true);
+		}
+	}
+
 	private void initializeNewBug() {
 		new_bug_panel.removeAll();
 		

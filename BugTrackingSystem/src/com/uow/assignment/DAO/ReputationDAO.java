@@ -101,7 +101,7 @@ public class ReputationDAO {
 		Connection conn = MySQLConnection.getConnection();
 		int count = 0;
 		try {
-			PreparedStatement stt = conn.prepareStatement("SELECT COUNT(*) AS total FROM Reputation WHERE reputation=? AND TicketID IN (SELECT ID FROM Tickets WHERE reportedUser=?);");
+			PreparedStatement stt = conn.prepareStatement("SELECT COUNT(*) AS total FROM Reputation WHERE reputation=? AND TicketID IN (SELECT ID FROM Tickets WHERE reportedUser=?)");
 			stt.setBoolean(1, likeOrDislike);
 			stt.setInt(2, Integer.parseInt(crrUsr.getID()));
 			ResultSet rs = stt.executeQuery();

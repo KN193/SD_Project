@@ -31,11 +31,15 @@ public class DateFormatter extends AbstractFormatter {
     @Override
     public String valueToString(Object value){
         if (value != null) {
-//            Calendar cal = (Calendar) value;
-            return dateFormatter.format(value);
+        	if (value instanceof Calendar) {
+        		 Calendar cal = (Calendar) value;
+        		 return dateFormatter.format(cal.getTime());
+        	} else {
+        		return dateFormatter.format(value);
+        	}
         }
 
         return "";
     }
-
+    
 }

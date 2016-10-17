@@ -6,6 +6,7 @@ import com.uow.assignment.controller.ReputationManager;
 import com.uow.assignment.controller.UserManager;
 import com.uow.assignment.model.Roles;
 import com.uow.assignment.model.User;
+import com.uow.assignment.utility.StringEncryptor;
 import com.uow.assignment.view.TicketView;
 
 import javax.swing.BorderFactory;
@@ -26,6 +27,7 @@ public class UserView extends JPanel {
 	private ReputationManager repmng = new ReputationManager();
 	private User crrUsr;
 	private JLabel lblRolestxt,email;
+	private JButton btnFindUser, btnEditRoles, btnEditEmail, btnEditPassword,btnCreateUser;
 	/**
 	 * Create the panel.
 	 */
@@ -66,7 +68,7 @@ public class UserView extends JPanel {
 		panel.setBounds(6, 104, 686, 34);
 		add(panel);
 		
-		JButton btnEditRoles = new JButton("Edit Roles");
+		btnEditRoles = new JButton("Edit Roles");
 		btnEditRoles.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String[] choices = Roles.getAllRoles();
@@ -83,7 +85,7 @@ public class UserView extends JPanel {
 		});
 		panel.add(btnEditRoles);
 		
-		JButton btnEditEmail = new JButton("Edit Email");
+		btnEditEmail = new JButton("Edit Email");
 		btnEditEmail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			    String input = (String) JOptionPane.showInputDialog(getParent(), "Set User Role", crrUsr.getEmail()); // Initial choice
@@ -99,16 +101,16 @@ public class UserView extends JPanel {
 		});
 		panel.add(btnEditEmail);
 		
-		JButton btnEditPassword = new JButton("Edit Password");
+		btnEditPassword = new JButton("Edit Password");
 		btnEditPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showPasswordChange();
+				confirmOldPassword();
 			}
 
 		});
 		panel.add(btnEditPassword);
 		
-		JButton btnCreateUser = new JButton("Create User");
+		btnCreateUser = new JButton("Create User");
 		btnCreateUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JPanel content = (JPanel) getParent().getParent();
@@ -121,7 +123,7 @@ public class UserView extends JPanel {
 		});
 		panel.add(btnCreateUser);
 		
-		JButton btnFindUser = new JButton("Find User");
+		btnFindUser = new JButton("Find User");
 		panel.add(btnFindUser);
 		
 		JLabel lblReputation = new JLabel("Reputation:");
@@ -138,9 +140,66 @@ public class UserView extends JPanel {
 		txtDisLike.setBounds(465, 20, 61, 16);
 		add(txtDisLike);
 		
-		
+		filterRoles();
 	}
 	
+	protected void confirmOldPassword() {
+		PasswordChange pwdChange = new PasswordChange();
+		pwdChange.setPreferredSize(new Dimension(285, 77));
+		String[] options = new String[]{"OK", "Cancel"};
+		int option = JOptionPane.showOptionDialog(this, pwdChange, "Confirm your old Password",
+		                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+		                         null, options, options[1]);
+		if(option == 0) // pressing OK button
+		{
+			if (pwdChange.validatePwd()) {
+				String userName = crrUsr.getUserName();
+				String pass = pwdChange.retrieveNewPassword();
+				User login = new User(userName, pass);
+				User loggedIn = usrmng.loginUser(login);
+				if (loggedIn != null) {
+					JOptionPane.showMessageDialog(this, "Password is confirmed ! Please help to enter your new password", "Information", JOptionPane.INFORMATION_MESSAGE);
+					showPasswordChange();
+				}
+			}
+		}
+		
+	}
+
+	private void filterRoles() {
+		if (crrUsr.getRoles().equals("Developer")) {
+			btnCreateUser.setVisible(false);
+			btnEditEmail.setVisible(true);
+			btnEditPassword.setVisible(true);
+			btnEditRoles.setVisible(false);
+			btnFindUser.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Reporter")) {
+			btnCreateUser.setVisible(false);
+			btnEditEmail.setVisible(true);
+			btnEditPassword.setVisible(true);
+			btnEditRoles.setVisible(false);
+			btnFindUser.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Triager")) {
+			btnCreateUser.setVisible(false);
+			btnEditEmail.setVisible(true);
+			btnEditPassword.setVisible(true);
+			btnEditRoles.setVisible(false);
+			btnFindUser.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Reviewer")) {
+			btnCreateUser.setVisible(false);
+			btnEditEmail.setVisible(true);
+			btnEditPassword.setVisible(true);
+			btnEditRoles.setVisible(false);
+			btnFindUser.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Manager")) {
+			btnCreateUser.setVisible(true);
+			btnEditEmail.setVisible(true);
+			btnEditPassword.setVisible(true);
+			btnEditRoles.setVisible(true);
+			btnFindUser.setVisible(true);
+		}
+	}
+
 	private void showPasswordChange() {
 		PasswordChange pwdChange = new PasswordChange();
 		pwdChange.setPreferredSize(new Dimension(285, 77));

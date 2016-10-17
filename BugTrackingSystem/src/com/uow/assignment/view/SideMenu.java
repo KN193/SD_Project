@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -61,12 +60,32 @@ public class SideMenu extends JPanel {
 		
 		// Report button
 		JLabel lbl_Report = new JLabel("");
+		lbl_Report.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				JPanel content = (JPanel) mview.getComponent(0);
+				content.removeAll();
+				ReportView rpView = new ReportView();
+				content.add(rpView);
+				rpView.setBounds(0, 0, 695, 428);
+				rpView.setBorder(BorderFactory.createLineBorder(Color.black));
+			}
+		});
 		lbl_Report.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_Report.setIcon(new ImageIcon("res/icon/png/reports_4.png"));
 		lbl_Report.setBounds(6, 166, 70, 68);
 		add(lbl_Report);
 		
 		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				JPanel content = (JPanel) mview.getComponent(0);
+				content.removeAll();
+				InformationView iView = new InformationView();
+				content.add(iView);
+				iView.setBounds(0, 0, 695, 428);
+				iView.setBorder(BorderFactory.createLineBorder(Color.black));
+			}
+		});
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setIcon(new ImageIcon("res/icon/png/web_management_4.png"));
 		lblNewLabel.setBounds(6, 246, 70, 68);

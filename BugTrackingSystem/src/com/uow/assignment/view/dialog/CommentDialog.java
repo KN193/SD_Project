@@ -32,7 +32,6 @@ public class CommentDialog extends JDialog {
 	private Ticket crrTicket;
 	private User crrUsr;
 	private JTextArea inputComment;
-	private int count = 0;
 
 	/**
 	 * Create the dialog.

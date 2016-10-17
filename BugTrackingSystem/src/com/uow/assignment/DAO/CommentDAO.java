@@ -23,9 +23,10 @@ public class CommentDAO {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			ArrayList<Comment> comments = new ArrayList<Comment>();
-			PreparedStatement stt = conn.prepareStatement("SELECT * FROM Comments WHERE TicketID = ? AND UserID = ?");
+//			PreparedStatement stt = conn.prepareStatement("SELECT * FROM Comments WHERE TicketID = ? AND UserID = ?");
+			PreparedStatement stt = conn.prepareStatement("SELECT * FROM Comments WHERE TicketID = ?");
 			stt.setInt(1, Integer.parseInt(t.getID()));
-			stt.setInt(2, Integer.parseInt(u.getID()));
+//			stt.setInt(2, Integer.parseInt(u.getID()));
 			
 			ResultSet rs = stt.executeQuery();
 			while (rs.next()) {

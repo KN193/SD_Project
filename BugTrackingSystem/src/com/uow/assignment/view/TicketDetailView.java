@@ -36,6 +36,7 @@ public class TicketDetailView extends JPanel {
 	private Ticket ticket;
 	private JLabel priorityTxt;
 	private JLabel statusTxt;
+	private JButton btnPriority,btnChangeStatus,btnAssignTicket,btnAddPatch,btnDownloadPatch,btnCommentTicket;
 	private JLabel lblAssignedUser, assignedUserTxt, patchTxt, lblLike, lblDislike;
 	private Reputation rep;
 	private TicketManager tkmng = new TicketManager();
@@ -123,7 +124,7 @@ public class TicketDetailView extends JPanel {
 		panel.setBounds(0, 308, 695, 69);
 		add(panel);
 		
-		JButton btnPriority = new JButton("Set Priority");
+		btnPriority = new JButton("Set Priority");
 		btnPriority.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String[] choices = primng.getPriorityList();
@@ -139,7 +140,7 @@ public class TicketDetailView extends JPanel {
 		});
 		panel.add(btnPriority);
 		
-		JButton btnChangeStatus = new JButton("Change Status");
+		btnChangeStatus = new JButton("Change Status");
 		btnChangeStatus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String[] choices = sttmng.getAllStatusesList();
@@ -154,7 +155,7 @@ public class TicketDetailView extends JPanel {
 		});
 		panel.add(btnChangeStatus);
 		
-		JButton btnAssignTicket = new JButton("Assign Ticket");
+		btnAssignTicket = new JButton("Assign Ticket");
 		btnAssignTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String[] choices = usrmng.getListOfUser();
@@ -170,7 +171,7 @@ public class TicketDetailView extends JPanel {
 		});
 		panel.add(btnAssignTicket);
 		
-		JButton btnAddPatch = new JButton("Add Patch");
+		btnAddPatch = new JButton("Add Patch");
 		btnAddPatch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				chooseFile();
@@ -179,19 +180,23 @@ public class TicketDetailView extends JPanel {
 		});
 		panel.add(btnAddPatch);
 		
-		JButton btnDownloadPatch = new JButton("Download Patch");
+		btnDownloadPatch = new JButton("Download Patch");
 		btnDownloadPatch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				savePatch();
+				if (patchTxt.getText().equalsIgnoreCase("Patch is attached")) {
+					savePatch();
+				} else {
+					JOptionPane.showMessageDialog(getParent(), "No Patch is attached for this ticket", "Error", JOptionPane.ERROR_MESSAGE);
+				}
 			}
 
 		});
 		panel.add(btnDownloadPatch);
 		
-		JButton btnEditTicket = new JButton("Edit Ticket");
-		panel.add(btnEditTicket);
+//		JButton btnEditTicket = new JButton("Edit Ticket");
+//		panel.add(btnEditTicket);
 		
-		JButton btnCommentTicket = new JButton("Comment Ticket");
+		btnCommentTicket = new JButton("Comment Ticket");
 		btnCommentTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CommentDialog dialog = new CommentDialog(ticket, crrUsr, SwingUtilities.windowForComponent(getParent()));
@@ -268,9 +273,49 @@ public class TicketDetailView extends JPanel {
 		add(lblDislike);
 		
 		CheckReputation();
-		
+		filterRoles();
 	}
 	
+	private void filterRoles() {
+		if (crrUsr.getRoles().equals("Developer")) {
+			btnAddPatch.setVisible(true);
+			btnAssignTicket.setVisible(false);
+			btnChangeStatus.setVisible(false);
+			btnCommentTicket.setVisible(true);
+			btnDownloadPatch.setVisible(true);
+			btnPriority.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Reporter")) {
+			btnAddPatch.setVisible(false);
+			btnAssignTicket.setVisible(false);
+			btnChangeStatus.setVisible(false);
+			btnCommentTicket.setVisible(true);
+			btnDownloadPatch.setVisible(false);
+			btnPriority.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Triager")) {
+			btnAddPatch.setVisible(false);
+			btnAssignTicket.setVisible(true);
+			btnChangeStatus.setVisible(true);
+			btnCommentTicket.setVisible(true);
+			btnDownloadPatch.setVisible(false);
+			btnPriority.setVisible(true);
+		} else if (crrUsr.getRoles().equals("Reviewer")) {
+			btnAddPatch.setVisible(false);
+			btnAssignTicket.setVisible(false);
+			btnChangeStatus.setVisible(false);
+			btnCommentTicket.setVisible(true);
+			btnDownloadPatch.setVisible(true);
+			btnPriority.setVisible(false);
+		} else if (crrUsr.getRoles().equals("Manager")) {
+			btnAddPatch.setVisible(false);
+			btnAssignTicket.setVisible(true);
+			btnChangeStatus.setVisible(true);
+			btnCommentTicket.setVisible(true);
+			btnDownloadPatch.setVisible(true);
+			btnPriority.setVisible(true);
+		}
+		
+	}
+
 	private void CheckReputation() {
 		rep = repmng.checkReputation(ticket, crrUsr);
 		if (rep != null) {
