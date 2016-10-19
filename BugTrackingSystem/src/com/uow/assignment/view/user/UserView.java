@@ -87,10 +87,11 @@ public class UserView extends JPanel {
 			        choices, // Array of choices
 			        choices[0]); // Initial choice
 			    
-			    crrUsr.setRoles(input);
-			    usrmng.updateRoles(crrUsr);
-			    lblRolestxt.setText(input);
-			    
+			    if (input != null && !input.equals("")) {
+				    crrUsr.setRoles(input);
+				    usrmng.updateRoles(crrUsr);
+				    lblRolestxt.setText(input);
+			    }
 			}
 		});
 		panel.add(btnEditRoles);
@@ -98,11 +99,11 @@ public class UserView extends JPanel {
 		btnEditEmail = new JButton("Edit Email");
 		btnEditEmail.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			    String input = (String) JOptionPane.showInputDialog(getParent(), "Set User Role", crrUsr.getEmail()); // Initial choice
+			    String input = (String) JOptionPane.showInputDialog(getParent(), "Set User Email", crrUsr.getEmail()); // Initial choice
 			    
 			    // validate email if have one
 			    // validateEmail();
-			    if (!input.equals("")) {
+			    if (input != null && !input.equals("")) {
 				    crrUsr.setEmail(input);
 				    usrmng.updateEmail(crrUsr);
 				    email.setText(input);
@@ -142,13 +143,15 @@ public class UserView extends JPanel {
 			        choices, // Array of choices
 			        choices[0]); // Initial choice
 			    
-			    User tmp = usrmng.findByUserName(input);
-			    
-			    content_panel.removeAll();
-			    crrUsr = tmp;
-			    initializeView();
-			    content_panel.revalidate();
-			    content_panel.repaint();
+			    if (input != null && !input.equals("")) {
+				    User tmp = usrmng.findByUserName(input);
+				    
+				    content_panel.removeAll();
+				    crrUsr = tmp;
+				    initializeView();
+				    content_panel.revalidate();
+				    content_panel.repaint();
+			    }
 			}
 		});
 		panel.add(btnFindUser);

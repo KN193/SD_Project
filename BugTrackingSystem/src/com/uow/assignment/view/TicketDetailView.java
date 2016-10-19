@@ -132,9 +132,10 @@ public class TicketDetailView extends JPanel {
 			        "Set Priority", JOptionPane.QUESTION_MESSAGE, null,
 			        choices, // Array of choices
 			        choices[0]); // Initial choice
-			    
-			    updateTicketPriority(input);
-			    priorityTxt.setText(input);
+			    if (input != null && !input.equals("")) {
+				    updateTicketPriority(input);
+				    priorityTxt.setText(input);
+			    }
 			}
 
 		});
@@ -149,8 +150,10 @@ public class TicketDetailView extends JPanel {
 			        choices, // Array of choices
 			        choices[0]); // Initial choice
 			    
-			    updateTicketStatus(input);
-			    statusTxt.setText(input);
+			    if (input != null && !input.equals("")) {
+				    updateTicketStatus(input);
+				    statusTxt.setText(input);
+			    }
 			}
 		});
 		panel.add(btnChangeStatus);
@@ -163,9 +166,10 @@ public class TicketDetailView extends JPanel {
 			        "Assign Ticket", JOptionPane.QUESTION_MESSAGE, null,
 			        choices, // Array of choices
 			        choices[0]); // Initial choice
-			    
-			    updateTicketAssign(input);
-			    assignedUserTxt.setText(input);
+			    if (input != null && !input.equals("")) {
+			    	updateTicketAssign(input);
+			    	assignedUserTxt.setText(input);
+			    }
 			}
 
 		});
