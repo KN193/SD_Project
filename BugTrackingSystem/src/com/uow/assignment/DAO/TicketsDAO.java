@@ -19,7 +19,7 @@ import com.uow.assignment.model.Ticket;
 
 public class TicketsDAO {
 
-	public Ticket createNewBug(Ticket bug) {
+	public Ticket createNewTicket(Ticket bug) {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			PreparedStatement stt = conn
@@ -99,7 +99,7 @@ public class TicketsDAO {
 		}
 	}
 
-	public void updateBug(Ticket ticket) {
+	public void updateTicket(Ticket ticket) {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			PreparedStatement stt = conn.prepareStatement("UPDATE Tickets SET description = ?, priority = ?, status = ?, assignedUser = ?, reportedUser = ?, component = ? WHERE ID = ?");
@@ -121,7 +121,7 @@ public class TicketsDAO {
 		
 	}
 	
-	public void updateBugPriority(Ticket ticket) {
+	public void updateTicketPriority(Ticket ticket) {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			PreparedStatement stt = conn.prepareStatement("UPDATE Tickets SET priority = ? WHERE ID = ?");
@@ -138,7 +138,7 @@ public class TicketsDAO {
 		
 	}
 
-	public void updateBugStatus(Ticket ticket) {
+	public void updateTicketStatus(Ticket ticket) {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			PreparedStatement stt = conn.prepareStatement("UPDATE Tickets SET status = ? WHERE ID = ?");
@@ -154,7 +154,7 @@ public class TicketsDAO {
 		}
 	}
 
-	public void updateBugAssign(Ticket ticket) {
+	public void updateTicketAssign(Ticket ticket) {
 		Connection conn = MySQLConnection.getConnection();
 		try {
 			PreparedStatement stt = conn.prepareStatement("UPDATE Tickets SET assignedUser = ? WHERE ID = ?");

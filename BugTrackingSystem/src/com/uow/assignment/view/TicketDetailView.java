@@ -235,15 +235,15 @@ public class TicketDetailView extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (rep == null) {
 					repmng.addReputation(ticket, crrUsr, true); // like
-					CheckReputation();
+					checkReputation();
 					showNotifyMessage();
 				} else if (!rep.isLikeOrDislike()) { // if this already rated as dislike
 					repmng.updateReputation(ticket, crrUsr, true); // update to like
-					CheckReputation();
+					checkReputation();
 					showNotifyMessage();
 				} else { // remove the reputation
 					repmng.removeReputation(ticket, crrUsr); // remove the reputation
-					CheckReputation();
+					checkReputation();
 					showNotifyMessage();
 				}
 			}
@@ -259,15 +259,15 @@ public class TicketDetailView extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				if (rep == null) {
 					repmng.addReputation(ticket, crrUsr, false); // dislike
-					CheckReputation();
+					checkReputation();
 					showNotifyMessage();
 				} else if (rep.isLikeOrDislike()) { // if this already rated as like
 					repmng.updateReputation(ticket, crrUsr, false); // update to dislike
-					CheckReputation();
+					checkReputation();
 					showNotifyMessage();
 				} else { // remove the reputation
 					repmng.removeReputation(ticket, crrUsr); // remove the reputation
-					CheckReputation();
+					checkReputation();
 					showNotifyMessage();
 				}
 			}
@@ -276,7 +276,7 @@ public class TicketDetailView extends JPanel {
 		lblDislike.setBounds(630, 90, 34, 31);
 		add(lblDislike);
 		
-		CheckReputation();
+		checkReputation();
 		filterRoles();
 	}
 	
@@ -320,7 +320,7 @@ public class TicketDetailView extends JPanel {
 		
 	}
 
-	private void CheckReputation() {
+	private void checkReputation() {
 		rep = repmng.checkReputation(ticket, crrUsr);
 		if (rep != null) {
 			if (rep.isLikeOrDislike()) {  //True is like, False is Dislike
@@ -389,18 +389,18 @@ public class TicketDetailView extends JPanel {
 	private void updateTicketPriority(String input) {
 		// TODO Auto-generated method stub
 		 ticket.setPriority(primng.getPriorityByName(input));
-		 tkmng.updateBugPriority(ticket);
+		 tkmng.updateTicketPriority(ticket);
 	}
 
 	private void updateTicketStatus(String input) {
 		// TODO Auto-generated method stub
 		ticket.setStatus(sttmng.getStatusByName(input));
-		tkmng.updateBugStatus(ticket);
+		tkmng.updateTicketStatus(ticket);
 	}
 	
 	private void updateTicketAssign(String input) {
 		ticket.setAssignedUser(usrmng.findByUserName(input));
-		tkmng.updateBugAssign(ticket);
+		tkmng.updateTicketAssign(ticket);
 		
 	}
 }

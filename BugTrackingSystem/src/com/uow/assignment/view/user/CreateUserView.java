@@ -104,6 +104,11 @@ public class CreateUserView extends JPanel {
 			return false;
 		}
 		
+		if (pwdPasswordtxt.getText().trim().equals("") || pwdConfirmtxt.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(this, "Password and confirm password must not be blank !", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
 		return true;
 	}
 	

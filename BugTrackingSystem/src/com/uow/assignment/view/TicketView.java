@@ -464,7 +464,7 @@ public class TicketView extends JPanel {
 		newBug.setCreationTime(creationDate);
 		newBug.setComponent(component);
 		try {
-			Ticket ticket = bugmng.createNewBug(newBug);
+			Ticket ticket = bugmng.createNewTicket(newBug);
 			JOptionPane.showMessageDialog(getParent(), "Recorded new bug to system", "Information", JOptionPane.INFORMATION_MESSAGE);
 			return ticket;
 		} catch (Exception e) {

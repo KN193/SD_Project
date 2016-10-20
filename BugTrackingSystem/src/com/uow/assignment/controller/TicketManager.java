@@ -10,25 +10,25 @@ import com.uow.assignment.model.Ticket;
 public class TicketManager {
 private TicketsDAO bugsDAO =  new TicketsDAO();
 	
-	public Ticket createNewBug (Ticket bug) {
-		Ticket ticket = bugsDAO.createNewBug(bug);
+	public Ticket createNewTicket (Ticket bug) {
+		Ticket ticket = bugsDAO.createNewTicket(bug);
 		return ticket;
 	}
 
-	public void updateBug(Ticket ticket) {
-		bugsDAO.updateBug(ticket);
+	public void updateTicket(Ticket ticket) {
+		bugsDAO.updateTicket(ticket);
 	}
 	
-	public void updateBugPriority(Ticket ticket) {
-		bugsDAO.updateBugPriority(ticket);
+	public void updateTicketPriority(Ticket ticket) {
+		bugsDAO.updateTicketPriority(ticket);
 	}
 
-	public void updateBugStatus(Ticket ticket) {
-		bugsDAO.updateBugStatus(ticket);
+	public void updateTicketStatus(Ticket ticket) {
+		bugsDAO.updateTicketStatus(ticket);
 	}
 
-	public void updateBugAssign(Ticket ticket) {
-		bugsDAO.updateBugAssign(ticket);		
+	public void updateTicketAssign(Ticket ticket) {
+		bugsDAO.updateTicketAssign(ticket);		
 	}
 
 	public void addTicketPatch(Ticket ticket) {
