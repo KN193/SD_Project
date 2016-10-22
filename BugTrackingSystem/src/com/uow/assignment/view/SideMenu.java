@@ -15,6 +15,8 @@ import com.uow.assignment.view.user.UserView;
 
 public class SideMenu extends JPanel {
 
+	private JLabel lbl_Report;
+	private User crrUser;
 	/**
 	 * Create the panel.
 	 * @param mview 
@@ -23,6 +25,7 @@ public class SideMenu extends JPanel {
 	public SideMenu(final MainView mview, final User user) {
 		setLayout(null);
 		
+		crrUser = user;
 		// User button
 		JLabel lblusr = new JLabel("");
 		lblusr.addMouseListener(new MouseAdapter() {
@@ -59,7 +62,7 @@ public class SideMenu extends JPanel {
 		add(lblBug);
 		
 		// Report button
-		JLabel lbl_Report = new JLabel("");
+		lbl_Report = new JLabel("");
 		lbl_Report.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				JPanel content = (JPanel) mview.getComponent(0);
@@ -72,7 +75,7 @@ public class SideMenu extends JPanel {
 		});
 		lbl_Report.setHorizontalAlignment(SwingConstants.CENTER);
 		lbl_Report.setIcon(new ImageIcon("res/icon/png/reports_4.png"));
-		lbl_Report.setBounds(6, 166, 70, 68);
+		lbl_Report.setBounds(6, 246, 70, 68);
 		add(lbl_Report);
 		
 		JLabel lblNewLabel = new JLabel("");
@@ -88,9 +91,18 @@ public class SideMenu extends JPanel {
 		});
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setIcon(new ImageIcon("res/icon/png/web_management_4.png"));
-		lblNewLabel.setBounds(6, 246, 70, 68);
+		lblNewLabel.setBounds(6, 166, 70, 68);
 		add(lblNewLabel);
 
+		filterRoles();
+	}
+	
+	public void filterRoles() {
+		if (crrUser.getRoles().equals("Manager")) {
+			lbl_Report.setVisible(true);
+		} else {
+			lbl_Report.setVisible(false);
+		}
 	}
 
 }
