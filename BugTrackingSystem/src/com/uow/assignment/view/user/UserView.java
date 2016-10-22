@@ -115,7 +115,7 @@ public class UserView extends JPanel {
 		btnEditPassword = new JButton("Edit Password");
 		btnEditPassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				confirmOldPassword();
+				showPasswordChange();
 			}
 
 		});
@@ -145,10 +145,10 @@ public class UserView extends JPanel {
 			    
 			    if (input != null && !input.equals("")) {
 				    User tmp = usrmng.findByUserName(input);
-				    
 				    content_panel.removeAll();
 				    crrUsr = tmp;
 				    initializeView();
+				    btnEditPassword.setVisible(false);
 				    content_panel.revalidate();
 				    content_panel.repaint();
 			    }
@@ -172,28 +172,28 @@ public class UserView extends JPanel {
 		
 	}
 
-	protected void confirmOldPassword() {
-		PasswordChange pwdChange = new PasswordChange();
-		pwdChange.setPreferredSize(new Dimension(285, 77));
-		String[] options = new String[]{"OK", "Cancel"};
-		int option = JOptionPane.showOptionDialog(this, pwdChange, "Confirm your old Password",
-		                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-		                         null, options, options[1]);
-		if(option == 0) // pressing OK button
-		{
-			if (pwdChange.validatePwd()) {
-				String userName = crrUsr.getUserName();
-				String pass = pwdChange.retrieveNewPassword();
-				User login = new User(userName, pass);
-				User loggedIn = usrmng.loginUser(login);
-				if (loggedIn != null) {
-					JOptionPane.showMessageDialog(this, "Password is confirmed ! Please help to enter your new password", "Information", JOptionPane.INFORMATION_MESSAGE);
-					showPasswordChange();
-				}
-			}
-		}
-		
-	}
+//	protected void confirmOldPassword() {
+//		PasswordChange pwdChange = new PasswordChange();
+//		pwdChange.setPreferredSize(new Dimension(285, 77));
+//		String[] options = new String[]{"OK", "Cancel"};
+//		int option = JOptionPane.showOptionDialog(this, pwdChange, "Confirm your old Password",
+//		                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+//		                         null, options, options[1]);
+//		if(option == 0) // pressing OK button
+//		{
+//			if (pwdChange.validatePwd()) {
+//				String userName = crrUsr.getUserName();
+//				String pass = pwdChange.retrieveNewPassword();
+//				User login = new User(userName, pass);
+//				User loggedIn = usrmng.loginUser(login);
+//				if (loggedIn != null) {
+//					JOptionPane.showMessageDialog(this, "Password is confirmed ! Please help to enter your new password", "Information", JOptionPane.INFORMATION_MESSAGE);
+//					showPasswordChange();
+//				}
+//			}
+//		}
+//		
+//	}
 
 	private void filterRoles() {
 		if (crrUsr.getRoles().equals("Developer")) {
@@ -231,14 +231,21 @@ public class UserView extends JPanel {
 
 	private void showPasswordChange() {
 		PasswordChange pwdChange = new PasswordChange();
-		pwdChange.setPreferredSize(new Dimension(285, 77));
+		pwdChange.setPreferredSize(new Dimension(285, 106));
 		String[] options = new String[]{"OK", "Cancel"};
 		int option = JOptionPane.showOptionDialog(this, pwdChange, "Change Password",
 		                         JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 		                         null, options, options[1]);
 		if(option == 0) // pressing OK button
 		{
-			if (pwdChange.validatePwd()) {
+			String userName = crrUsr.getUserName();
+			String pass = pwdChange.retrieveOldPassword();
+			User login = new User(userName, pass);
+			User loggedIn = usrmng.loginUser(login);
+			if (loggedIn == null) {
+				JOptionPane.showMessageDialog(this, "Old Password is incorrect ! Please help to enter your correct password", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+			else if (pwdChange.validatePwd()) {
 				String password = pwdChange.retrieveNewPassword();
 			    crrUsr.setPwd(password);
 			    usrmng.updatePassword(crrUsr);

@@ -11,27 +11,36 @@ public class PasswordChange extends JPanel {
 
 	private JPasswordField pwdPasswordtxt;
 	private JPasswordField pwdConfirmtxt;
+	private JPasswordField oldpwd;
 	
 	/**
 	 * Create the panel.
 	 */
 	public PasswordChange() {
 		setLayout(null);
-		JLabel lblPassword = new JLabel("Password:");
-		lblPassword.setBounds(6, 10, 63, 16);
+		JLabel lblPassword = new JLabel("New Password:");
+		lblPassword.setBounds(6, 48, 106, 16);
 		add(lblPassword);
 		
 		JLabel lblConfirmPassword = new JLabel("Confirm password:");
-		lblConfirmPassword.setBounds(6, 38, 119, 16);
+		lblConfirmPassword.setBounds(6, 76, 119, 16);
 		add(lblConfirmPassword);
 		
 		pwdPasswordtxt = new JPasswordField();
-		pwdPasswordtxt.setBounds(130, 5, 123, 26);
+		pwdPasswordtxt.setBounds(130, 43, 123, 26);
 		add(pwdPasswordtxt);
 		
 		pwdConfirmtxt = new JPasswordField();
-		pwdConfirmtxt.setBounds(130, 33, 123, 26);
+		pwdConfirmtxt.setBounds(130, 71, 123, 26);
 		add(pwdConfirmtxt);
+		
+		JLabel lblOldPassword = new JLabel("Old Password:");
+		lblOldPassword.setBounds(6, 20, 106, 16);
+		add(lblOldPassword);
+		
+		oldpwd = new JPasswordField();
+		oldpwd.setBounds(130, 15, 123, 26);
+		add(oldpwd);
 	}
 	
 	public boolean validatePwd() {
@@ -46,5 +55,8 @@ public class PasswordChange extends JPanel {
 	public String retrieveNewPassword() {
 		return new StringEncryptor().encryptPassword(pwdPasswordtxt.getText());
 	}
-
+	
+	public String retrieveOldPassword() {
+		return new StringEncryptor().encryptPassword(oldpwd.getText());
+	}
 }
