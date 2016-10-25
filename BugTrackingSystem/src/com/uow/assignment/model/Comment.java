@@ -9,6 +9,7 @@ public class Comment {
 	private Date createdDate;
 	private User commentUser;
 	private Ticket ticketCommented;
+	public Comment(){};
 	public Comment(String content, int ID, Date createdDate,
 			User commentUser, Ticket ticketCommented) {
 		super();

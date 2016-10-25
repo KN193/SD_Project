@@ -1,6 +1,7 @@
 package com.uow.assignment.model;
 
 public class User {
+
 	String userName, pwd, roles, ID, email;
 
 	public User(String userName, String pwd, String roles, String iD, String email) {
@@ -65,5 +66,19 @@ public class User {
 
 	public void setRoles(String roles) {
 		this.roles = roles;
+	}
+	
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return (
+					((User)obj).getID().equals(this.ID)
+				&& ((User)obj).getUserName().equals(this.userName)
+				);
 	}
 }

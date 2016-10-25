@@ -22,4 +22,14 @@ public class Priority {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		return (((Priority)obj).getName().equals(name));
+	}
 }

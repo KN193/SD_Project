@@ -90,4 +90,14 @@ public class Ticket {
 	public void setPatchAttached(boolean isPatchAttached) {
 		this.isPatchAttached = isPatchAttached;
 	}
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return ((Ticket)obj).getID().equals(this.ID);
+	}
 }

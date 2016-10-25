@@ -22,4 +22,15 @@ public class Status {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		return (((Status)obj).getName().equals(name));
+	}
+	
 }
